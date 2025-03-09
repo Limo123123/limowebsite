@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Limazon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        .product { border: 1px solid #ddd; padding: 10px; margin: 10px; }
+        .pagination { margin-top: 20px; }
+        .hidden { display: none; }
+        #cart-items {
+        max-height: 300px; /* maximale Höhe */
+        overflow-y: auto; /* Erlaubt vertikales Scrollen */
+        }
+        #checkout-modal .bg-white {
+            max-height: 80vh; /* Maximale Höhe des Modals */
+            overflow-y: auto; /* Aktiviert vertikales Scrollen */
+            padding-bottom: 60px; /* Platz für den Button */
+        }
+
+        #checkout-modal .flex.justify-between {
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+            padding: 10px;
+            z-index: 10; /* Sicherstellen, dass der Button oben bleibt */
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 font-roboto">
+
+    <header class="bg-blue-600 p-4 flex justify-between items-center">
+        <div class="text-white text-2xl font-bold">Limazon</div>
+        <div class="text-white text-lg font-semibold">Buy Your Human Now</div>
+        <div class="flex items-center space-x-4">
+            <div class="text-white">Hello, <span id="customer-name">Guest</span></div>
+            <button class="relative" onclick="viewCart()">
+                <i class="fas fa-shopping-cart text-white text-2xl"></i>
+                <span class="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center" id="cart-count">0</span>
+            </button>
+            <button class="bg-white text-blue-600 px-4 py-2 rounded" onclick="editProfile()">Edit Profile</button>
+        </div>
+    </header>
+
+    <main class="p-4">
+        <h1 class="text-xl font-bold mb-4 text-center">Produktliste</h1>
+
+        <!-- Suchleiste -->
+        <div class="w-full max-w-md mb-4 mx-auto text-center">
+            <input type="text" id="search" placeholder="Produkt suchen..." class="border rounded p-2 w-full">
+        </div>
+    
+        <!-- Produktliste -->
+        <div class="w-full">
+            <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        </div>
+    
+        <!-- Pagination -->
+        <div class="w-full flex justify-center mt-6">
+            <button id="prev" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">&laquo; Zurück</button>
+            <span id="page-info" class="px-4"></span>
+            <button id="next" class="bg-blue-600 text-white px-4 py-2 rounded ml-2">Weiter &raquo;</button>
+        </div>
+        <div class="mt-4">
+            <input id="delete-product-id" type="text" placeholder="Enter Product ID (6 digits)" class="border rounded p-2 w-64">
+            <button class="bg-red-600 text-white px-4 py-2 rounded" onclick="deleteProductById()">🗑 Delete Product</button>
+        </div>
+
+        <button class="bg-green-600 text-white px-4 py-2 rounded" onclick="openAddProductModal()">+ New Product</button>
+
+    </main>
+
+    <!-- Shopping Cart Modal -->
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden" id="cart-modal">
+        <div class="bg-white p-4 rounded-lg shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
+            <h2 class="text-xl font-bold mb-4 text-center">Warenkorb</h2>
+            <div id="cart-items" class="mb-4"></div>
+            <div class="text-right font-bold text-lg">Total: $<span id="cart-total">0.00</span></div>
+            <div class="mt-4 flex justify-between">
+                <button class="bg-gray-400 text-white px-4 py-2 rounded" onclick="closeCart()">Schließen</button>
+                <button class="bg-green-600 text-white px-4 py-2 rounded" onclick="checkout()">Zur Kasse</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden" id="checkout-modal">
+        <div class="bg-white p-4 rounded-lg shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
+            <h2 class="text-xl font-bold mb-4 text-center">Checkout</h2>
+            <div id="checkout-items" class="mb-4"></div>
+            <div class="text-right font-bold text-lg">Total: $<span id="checkout-total">0.00</span></div>
+            <div class="mt-4 flex justify-between">
+                <button class="bg-gray-400 text-white px-4 py-2 rounded" onclick="closeCheckout()">Schließen</button>
+                <button class="bg-green-600 text-white px-4 py-2 rounded" onclick="confirmPurchase()">Bestätigen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden" id="thank-you-modal">
+        <div class="bg-white p-4 rounded-lg shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
+            <h2 class="text-xl font-bold mb-4 text-center">Danke für deinen Einkauf!</h2>
+            <p class="text-center mb-4">Deine Bestellung wurde erfolgreich bestätigt.</p>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded" onclick="generateInvoice()">Download Invoice</button>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+        <div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden" id="profile-modal">
+            <div class="bg-white p-4 rounded-lg shadow-lg w-3/4 md:w-1/2 lg:w-1/3">
+                <h2 class="text-xl font-bold mb-4 text-center">Edit Profile</h2>
+                <div class="mb-4">
+                    <label for="customer-name-input" class="block text-lg">Your Name:</label>
+                    <input id="customer-name-input" type="text" class="border rounded p-2 w-full" placeholder="Enter your name" />
+                </div>
+                <div class="mt-4 flex justify-between">
+                    <button class="bg-gray-400 text-white px-4 py-2 rounded" onclick="closeProfile()">Cancel</button>
+                    <button class="bg-green-600 text-white px-4 py-2 rounded" onclick="saveProfile()">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="bg-blue-600 p-4 mt-8 text-white text-center">
+            © 2025 Limo Open Source Project. Limazon Buy your Person now. All rights reserved.
+        </footer>
+    
+    </div>
+
+    <script>
+        let products = [];
+        let filteredProducts = [];
+        let currentPage = 1;
+        const itemsPerPage = 8;
+        let cart = [];
+        let customerName = 'Guest';
+
+        async function loadProducts() {
+            // Detect the current protocol (http or https)
+            const protocol = window.location.protocol; // "http:" or "https:"
+    
+            // Use the correct domain based on the protocol
+            const apiUrl = protocol === 'https:' 
+                ? 'https://host.slimo.v6.rocks/api/products' 
+                : 'http://mexico-utilize.gl.at.ply.gg:18468/api/products';
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                products = data.products;
+                filteredProducts = products;
+                renderProducts();
+            } catch (error) {
+                console.error("Error loading products:", error);
+            }
+        }
+
+        function renderProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+    
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageProducts = filteredProducts.slice(start, end);
+    
+            pageProducts.forEach((product, index) => {
+                const div = document.createElement('div');
+                div.classList.add('product');
+                div.innerHTML = `
+                        <img src="${product.image_url}" alt="${product.name}" class="product-image"/>
+                        <strong>${product.name}</strong><br>Preis: ${product.price}<br>
+                        <input class="border rounded w-16 text-center" id="quantity-${index}" min="1" type="number" value="1"/>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded" onclick="addToCart('${product.name}', '${product.price}', document.getElementById('quantity-${index}').value)">Add to Cart</button>
+                        <button class="bg-green-600 text-white px-4 py-2 rounded" onclick="buyNow('${product.name}', '${product.price}', document.getElementById('quantity-${index}').value)">Buy Now</button>
+                        `;
+                productList.appendChild(div);
+        });
+
+            document.getElementById('page-info').textContent = `Seite ${currentPage} von ${Math.ceil(filteredProducts.length / itemsPerPage)}`;
+            document.getElementById('prev').disabled = currentPage === 1;
+            document.getElementById('next').disabled = currentPage === Math.ceil(filteredProducts.length / itemsPerPage);
+        }
+
+
+        document.getElementById('search').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchValue));
+            currentPage = 1;
+            renderProducts();
+        });
+
+        document.getElementById('prev').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderProducts();
+            }
+        });
+
+        document.getElementById('next').addEventListener('click', function() {
+            if (currentPage < Math.ceil(filteredProducts.length / itemsPerPage)) {
+                currentPage++;
+                renderProducts();
+            }
+        });
+
+        function addToCart(productName, productPrice, quantity) {
+            quantity = parseInt(quantity);
+            const price = parseFloat(productPrice.replace(/[^\d.]/g, '')); // Entfernt Währungszeichen und wandelt in Float um
+
+            if (isNaN(price)) {
+                console.error(`Ungültiger Preis für ${productName}:`, productPrice);
+                return;
+            }
+
+            const product = cart.find(item => item.name === productName);
+            if (product) {
+                product.quantity += quantity;
+            } else {
+              cart.push({ name: productName, price: price, quantity: quantity });
+          }
+          updateCartCount();
+         saveCartToCookies();
+        }
+
+
+        function buyNow(productName, productPrice, quantity) {
+            addToCart(productName, productPrice, quantity);
+            viewCart();
+        }
+
+        function viewCart() {
+            if (cart.length === 0) {
+             alert("Your cart is empty!");
+              return;
+           }
+
+            const cartModal = document.getElementById('cart-modal');
+            const cartItems = document.getElementById('cart-items');
+           const cartTotal = document.getElementById('cart-total');
+
+          if (!cartModal || !cartItems || !cartTotal) {
+              console.error("Fehlende Elemente im Warenkorb! Stelle sicher, dass 'cart-modal', 'cart-items' und 'cart-total' existieren.");
+               return;
+           }
+
+          cartItems.innerHTML = '';
+          let total = 0;
+
+          cart.forEach((item, index) => {
+              const itemTotal = item.price * item.quantity;
+              total += itemTotal;
+
+             const cartItem = document.createElement('div');
+             cartItem.className = 'flex justify-between items-center mb-2';
+             cartItem.innerHTML = `
+                  <span>${item.name} (x${item.quantity})</span>
+                  <span>$${itemTotal.toFixed(2)}</span>
+                  <div class="flex items-center space-x-2">
+                    <button class="bg-gray-300 px-2 py-1 rounded" onclick="changeQuantity(${index}, -1)">-</button>
+                    <input class="border rounded w-12 text-center" type="number" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+                    <button class="bg-gray-300 px-2 py-1 rounded" onclick="changeQuantity(${index}, 1)">+</button>
+                   <button class="bg-red-600 text-white px-2 py-1 rounded" onclick="removeFromCart(${index})">Remove</button>
+                 </div>
+             `;
+            cartItems.appendChild(cartItem);
+            });
+
+            cartTotal.textContent = `${total.toFixed(2)}`;
+            cartModal.classList.remove('hidden');
+        }
+
+        function closeCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.add('hidden');
+        }
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cart-count');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        function saveCartToCookies() {
+        document.cookie = `cart=${JSON.stringify(cart)}; path=/`;
+        }
+
+        function loadCartFromCookies() {
+            const cookies = document.cookie.split('; ');
+            const cartCookie = cookies.find(cookie => cookie.startsWith('cart='));
+            if (cartCookie) {
+                cart = JSON.parse(cartCookie.split('=')[1]);
+                updateCartCount();
+            }
+        }
+
+        function changeQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartCount();
+            saveCartToCookies();
+            viewCart();
+        }
+
+        function updateQuantity(index, quantity) {
+            quantity = parseInt(quantity);
+            if (quantity <= 0) {
+                cart.splice(index, 1);
+            } else {
+                cart[index].quantity = quantity;
+            }
+            updateCartCount();
+            saveCartToCookies();
+            viewCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            saveCartToCookies();
+            viewCart();
+        }
+
+        function checkout() {
+            const checkoutModal = document.getElementById('checkout-modal');
+            const checkoutItems = document.getElementById('checkout-items');
+            const checkoutTotal = document.getElementById('checkout-total');
+
+            if (!checkoutModal || !checkoutItems || !checkoutTotal) {
+                console.error("Fehlende Elemente für den Checkout!");
+                return;
+            }
+
+            checkoutItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                const checkoutItem = document.createElement('div');
+                checkoutItem.className = 'flex justify-between items-center mb-2';
+                checkoutItem.innerHTML = `
+                    <span>${item.name} (${item.quantity})</span>
+                    <span>$${itemTotal.toFixed(2)}</span>
+                `;
+                checkoutItems.appendChild(checkoutItem);
+            });
+
+            checkoutTotal.textContent = `${total.toFixed(2)}`;
+            checkoutModal.classList.remove('hidden');
+        }
+
+
+        function closeCheckout() {
+            const checkoutModal = document.getElementById('checkout-modal');
+            checkoutModal.classList.add('hidden');
+        }
+
+        function editProfile() {
+            const profileModal = document.getElementById('profile-modal');
+            const customerNameInput = document.getElementById('customer-name-input');
+
+            if (!profileModal || !customerNameInput) {
+                console.error("Profil-Modalfenster oder Namens-Input nicht gefunden!");
+            return;
+            }
+
+        customerNameInput.value = customerName;
+        profileModal.classList.remove('hidden');
+        }
+
+        function saveProfile() {
+            const customerNameInput = document.getElementById('customer-name-input');
+            customerName = customerNameInput.value;
+            document.getElementById('customer-name').textContent = customerName;
+            localStorage.setItem('customerName', customerName);
+            closeProfile();
+        }
+
+        function closeProfile() {
+            const profileModal = document.getElementById('profile-modal');
+            profileModal.classList.add('hidden');
+        }
+
+        function loadProfileFromLocalStorage() {
+            const storedName = localStorage.getItem('customerName');
+            if (storedName) {
+                customerName = storedName;
+                document.getElementById('customer-name').textContent = customerName;
+            }
+        }
+
+        function confirmPurchase() {
+            // Schließe das Checkout-Modal
+            closeCheckout();
+    
+            // Zeige das "Danke"-Modal an
+            const thankYouModal = document.getElementById('thank-you-modal');
+            thankYouModal.classList.remove('hidden');
+        }
+
+
+        function generateInvoice() {
+            console.log("🔹 generateInvoice() gestartet");
+
+            const { jsPDF } = window.jspdf;
+            if (!jsPDF) {
+                console.error("❌ jsPDF ist nicht geladen!");
+                return;
+            }
+
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFontSize(18);
+            doc.text('Limazon Invoice', 105, 20, null, null, 'center');
+
+            // Customer Info
+            doc.setFontSize(12);
+            doc.text(`Customer: ${customerName}`, 20, 40);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 50);
+            doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 60);
+
+            console.log("✅ Header und Customer Info gesetzt.");
+
+            // AutoTable prüfen
+            if (typeof doc.autoTable !== "function") {
+                console.error("❌ autoTable ist nicht verfügbar!");
+                return;
+            }
+
+            // Erstelle die Tabelle
+            doc.autoTable({
+                startY: 70,
+                head: [['Item', 'Quantity', 'Price', 'Total']],
+                body: cart.map(item => [
+                    item.name,
+                    item.quantity,
+                    `$${item.price.toFixed(2)}`,
+                    `$${(item.price * item.quantity).toFixed(2)}`
+                ]),
+                theme: 'grid',
+                headStyles: { fillColor: [41, 128, 185] },
+                margin: { top: 70 }
+            });
+
+            // FinalY sicherstellen
+            const finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY : 70;
+
+            // Total berechnen
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            doc.setFontSize(14);
+
+            // Berechne die Breite des "Total:"-Textes
+            const totalText = `Total: $${total.toFixed(2)}`;
+            const textWidth = doc.getTextWidth(totalText); // Breite des Textes
+
+            // Verschiebe die Position des Textes basierend auf der Breite
+            const pageWidth = doc.internal.pageSize.width;
+            const xPosition = pageWidth - textWidth - 20; // Etwas Abstand vom rechten Rand
+
+            // Zeichne das "Total"
+            doc.text(totalText, xPosition, finalY + 10);
+
+            // PDF speichern
+            doc.save('invoice.pdf');
+
+            // Schließe das "Danke"-Modal nach dem Download
+            const thankYouModal = document.getElementById('thank-you-modal');
+            thankYouModal.classList.add('hidden');
+        }
+
+        function getApiBaseUrl() {
+            return window.location.protocol === 'https:' 
+                ? 'https://host.slimo.v6.rocks/api' 
+                : 'http://mexico-utilize.gl.at.ply.gg:18468/api';
+        }
+
+
+        // Open Add Product Modal
+        function openAddProductModal() {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        // Close Add Product Modal
+        function closeAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+
+        async function submitProduct() {
+            const name = document.getElementById('product-name').value.trim();
+            const image_url = document.getElementById('product-image').value.trim();
+            let price = document.getElementById('product-price').value.trim();
+
+            if (!name || !image_url || !price) {
+                alert("All fields are required!");
+                return;
+            }
+
+            // ✅ Ensure price starts with "$"
+            price = price.trim();
+            if (!price.startsWith('$')) {
+                price = `$${price}`;
+            }
+
+            const newProduct = { name, image_url, price };
+
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newProduct)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // ✅ Create a prompt for easy copying
+                    const productId = data.product.id;
+                    navigator.clipboard.writeText(productId)
+                        .then(() => alert(`Product added!\nYour Product ID: ${productId}\n(ID copied to clipboard)`))
+                        .catch(() => alert(`Product added!\nYour Product ID: ${productId}\n(Copy manually)`));
+
+                    closeAddProductModal();
+                    loadProducts(); // Refresh the product list
+                } else {
+                    alert("Failed to add product.");
+                }
+            } catch (error) {
+                console.error("Error adding product:", error);
+            }
+        }
+
+
+        async function deleteProductById() {
+            const productId = document.getElementById('delete-product-id').value.trim();
+
+            if (!productId.match(/^\d{6}$/)) {
+                alert("Please enter a valid 6-digit Product ID.");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete product with ID ${productId}?`)) return;
+
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/products/${productId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                alert("Product deleted successfully!");
+                document.getElementById('delete-product-id').value = ""; // Clear input field
+                loadProducts(); // Refresh product list
+                } else {
+                    alert("Product not found or could not be deleted.");
+                }
+            } catch (error) {
+                console.error("Error deleting product:", error);
+            }
+        }
+
+        window.onload = () => {
+            loadProducts();
+            loadCartFromCookies();
+            loadProfileFromLocalStorage();
+        };
+
+    </script>
+     
+     <div id="add-product-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-bold mb-4 text-center">Add New Product</h2>
+            <input id="product-name" type="text" placeholder="Product Name" class="border rounded p-2 w-full mb-2">
+            <input id="product-image" type="text" placeholder="Image URL" class="border rounded p-2 w-full mb-2">
+            <input id="product-price" type="number" placeholder="Price" class="border rounded p-2 w-full mb-2">
+            <div class="flex justify-between mt-4">
+                <button class="bg-gray-400 text-white px-4 py-2 rounded" onclick="closeAddProductModal()">Cancel</button>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded" onclick="submitProduct()">Upload</button>
+            </div>
+        </div>
+    </div>    
+</body>
+</html>

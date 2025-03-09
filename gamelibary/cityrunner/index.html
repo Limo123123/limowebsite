@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Jumper</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { text-align: center; font-family: Arial, sans-serif; overflow: hidden; background: lightblue; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+        #startScreen, #gameOverScreen {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); color: white; display: flex;
+            align-items: center; justify-content: center; flex-direction: column;
+        }
+        button { padding: 15px 30px; font-size: 20px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>City Jumper</h1>
+        <button onclick="startGame()">Start</button>
+    </div>
+    <div id="gameOverScreen" style="display: none;">
+        <h1>Game Over!</h1>
+        <p>Score: <span id="finalScore">0</span></p>
+        <button onclick="restartGame()">Restart</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let player, gravity, jumpPower, buildings, speed, gapSize, score, stars, gameOver, playerImgLoaded, jumpCount;
+        const playerImg = new Image();
+        playerImg.src = "textures.png";
+        playerImg.onload = () => playerImgLoaded = true;
+        playerImg.onerror = () => console.error("Fehler beim Laden des Spielerbildes");
+        let frame = 0;
+
+        function startGame() {
+            document.getElementById("startScreen").style.display = "none";
+            document.getElementById("gameOverScreen").style.display = "none";
+            init();
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function init() {
+            player = { x: 50, y: canvas.height - 150, width: 44, height: 47, dy: 0, jumping: false };
+            gravity = 0.6;
+            jumpPower = -10;
+            buildings = [];
+            speed = 4;
+            gapSize = 100;
+            score = 0;
+            stars = [];
+            gameOver = false;
+            jumpCount = 0;
+            
+            for (let i = 0; i < 10; i++) {
+                createBuilding();
+            }
+            requestAnimationFrame(update);
+        }
+
+        function createBuilding() {
+            let width = Math.random() * 150 + 100;
+            let height = Math.random() * 50 + 150;
+            let x = buildings.length > 0 ? buildings[buildings.length - 1].x + buildings[buildings.length - 1].width + gapSize : 0;
+            buildings.push({ x: x, y: canvas.height - height, width: width, height: height });
+            
+            let starCount = Math.ceil(width / 60);
+            for (let i = 0; i < starCount; i++) {
+                stars.push({ x: x + (i + 1) * (width / (starCount + 1)), y: canvas.height - height - 20, collected: false });
+            }
+            gapSize += 5;
+        }
+
+        function update() {
+            if (!gameOver) {
+                frame++;
+                player.dy += gravity;
+                player.y += player.dy;
+                speed += 0.002;
+
+                if (player.y > canvas.height - player.height) {
+                    endGame();
+                }
+                
+                buildings.forEach(building => building.x -= speed);
+                stars.forEach(star => star.x -= speed);
+                
+                if (buildings[0].x + buildings[0].width < 0) {
+                    buildings.shift();
+                    stars = stars.filter(star => star.x > 0);
+                    createBuilding();
+                }
+                
+                buildings.forEach(building => {
+                    if (
+                        player.x < building.x + building.width &&
+                        player.x + player.width > building.x &&
+                        player.y + player.height > building.y
+                    ) {
+                        endGame();  // Tod bei Kollision mit Gebäude
+                    }
+                });
+                
+                stars.forEach(star => {
+                    if (!star.collected && player.x < star.x + 10 && player.x + player.width > star.x && player.y < star.y + 10 && player.y + player.height > star.y) {
+                        star.collected = true;
+                        score++;
+                    }
+                });
+            }
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (playerImgLoaded) {
+                ctx.drawImage(playerImg, 848 + (frame % 2) * 44, 0, 44, 47, player.x, player.y, player.width, player.height);
+            }
+            
+            ctx.fillStyle = "brown";
+            buildings.forEach(building => {
+                ctx.fillRect(building.x, building.y, building.width, building.height);
+
+                // Fenster in die Gebäude einfügen
+                const windowWidth = 20;
+                const windowHeight = 30;
+                for (let i = 0; i < building.height / windowHeight; i++) {
+                    for (let j = 0; j < building.width / windowWidth; j++) {
+                        ctx.fillStyle = "lightyellow";
+                        ctx.fillRect(building.x + j * windowWidth + 10, building.y - (i * windowHeight + 10), windowWidth, windowHeight);
+                    }
+                }
+            });
+            
+            ctx.fillStyle = "yellow";
+            stars.forEach(star => {
+                if (!star.collected) {
+                    ctx.beginPath();
+                    for (let i = 0; i < 5; i++) {
+                        let angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+                        let x = star.x + Math.cos(angle) * 6;
+                        let y = star.y + Math.sin(angle) * 6;
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            });
+            
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 20, 30);
+        }
+
+        function jump() {
+            if (jumpCount < 2) {
+                player.dy = jumpPower;
+                jumpCount++;
+            }
+        }
+
+        function endGame() {
+            gameOver = true;
+            document.getElementById("gameOverScreen").style.display = "flex";
+            document.getElementById("finalScore").innerText = score;
+        }
+
+        document.addEventListener("keydown", function(e) {
+            if (e.code === "Space") jump();
+        });
+        
+        canvas.addEventListener("touchstart", jump);
+    </script>
+</body>
+</html>

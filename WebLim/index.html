@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Archive Loader</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        li:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Web Archive Loader</h1>
+        <input type="text" id="searchBox" placeholder="Domain suchen..." oninput="filterList()">
+        <ul id="snapshotList"></ul>
+    </div>
+
+    <script>
+        async function loadSnapshots() {
+            try {
+                let response = await fetch('snapshots/index.json');
+                let snapshots = await response.json();
+                let list = document.getElementById('snapshotList');
+                list.innerHTML = '';
+                
+                snapshots.forEach(site => {
+                    let li = document.createElement('li');
+                    li.textContent = `${site.domain} - ${site.date}`;
+                    li.onclick = () => window.location.href = `snapshots/${site.domain}/${site.date}/index.html`;
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Fehler beim Laden der Snapshots:', error);
+            }
+        }
+        
+        function filterList() {
+            let searchValue = document.getElementById("searchBox").value.toLowerCase();
+            let items = document.querySelectorAll("#snapshotList li");
+            items.forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(searchValue) ? "block" : "none";
+            });
+        }
+
+        loadSnapshots();
+    </script>
+</body>
+</html>

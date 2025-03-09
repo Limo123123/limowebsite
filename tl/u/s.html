@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+            margin: 50px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: block;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .short-links {
+            margin-top: 20px;
+        }
+        .short-link {
+            background: #e8e8e8;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .short-link button {
+            background: red;
+            padding: 5px;
+            width: auto;
+            font-size: 14px;
+        }
+        .copy-btn, .qr-btn {
+            background: blue;
+            color: white;
+            border: none;
+            padding: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .qr-btn {
+            background: purple;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fast URL Shortener</h1>
+        <input type="text" id="url" placeholder="Gib eine URL ein (https://...)" />
+        <input type="text" id="short" placeholder="Gib eine Kurz-URL ein (optional)" />
+        <button onclick="createShortlink()">🔗 URL kürzen</button>
+        <div class="short-links" id="shortLinks"></div>
+    </div>
+    <script>
+        function createShortlink() {
+            const url = document.getElementById("url").value;
+            if (!url.startsWith("https://") && !url.startsWith("http://")) {
+                alert("Bitte eine gültige URL mit https:// oder http:// eingeben.");
+                return;
+            }
+            const existingShort = findShortByUrl(url);
+            const short = existingShort || document.getElementById("short").value || Math.random().toString(36).substr(2, 5);
+            localStorage.setItem("short_" + short, url);
+            renderShortLinks();
+        }
+        function renderShortLinks() {
+            const container = document.getElementById("shortLinks");
+            container.innerHTML = "";
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("short_")) {
+                    const short = key.replace("short_", "");
+                    const url = localStorage.getItem(key);
+                    container.innerHTML += `<div class='short-link'><span>/${short}</span>
+                        <button class='copy-btn' onclick='copyToClipboard("${short}")'>📋</button>
+                        <button class='qr-btn' onclick='generateQRCode("${short}")'>QR</button>
+                        <button onclick='deleteShort("${short}")'>❌</button></div>`;
+                }
+            }
+        }
+        function deleteShort(short) {
+            localStorage.removeItem("short_" + short);
+            renderShortLinks();
+        }
+        function copyToClipboard(short) {
+            const dummy = document.createElement("textarea");
+            dummy.value = window.location.origin + "/?l=" + short;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            alert("Link kopiert!");
+        }
+        function generateQRCode(short) {
+            const qrWindow = window.open();
+            qrWindow.document.write(`<img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${window.location.origin}/?l=${short}' />`);
+        }
+        function findShortByUrl(url) {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("short_")) {
+                    if (localStorage.getItem(key) === url) {
+                        return key.replace("short_", "");
+                    }
+                }
+            }
+            return null;
+        }
+        window.onload = function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has("l")) {
+                const link = localStorage.getItem("short_" + params.get("l"));
+                if (link) {
+                    document.body.innerHTML = "<h2>Weiterleitung...</h2>";
+                    setTimeout(() => { window.location.href = link; }, 1000);
+                } else {
+                    document.body.innerHTML = "<h2>Fehler: Link nicht gefunden!</h2>";
+                }
+            } else {
+                renderShortLinks();
+            }
+        };
+    </script>
+</body>
+</html>

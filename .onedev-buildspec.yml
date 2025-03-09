@@ -1,0 +1,302 @@
+version: 38
+jobs:
+- name: Publish Site
+  jobExecutor: Local-Pi5
+  steps:
+  - !CheckoutStep
+    name: Checkout
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishSiteStep
+    projectPath: limo-games
+    name: Publish
+    artifacts: . **
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Create PyPi (Limo-Games)
+  jobExecutor: External-Pi3B
+  steps:
+  - !CheckoutStep
+    name: get code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: BuildWHL
+    runInContainer: true
+    image: arm64v8/python:3.8
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        pip install --upgrade pip
+        pip install build
+
+        cd sources/pypi/limo-games
+
+        pip wheel .
+
+        # Use job token to tell OneDev the build publishing the package
+        # Job secret 'access-token' should be defined in project build setting as an access token with package write permission
+
+        cat << EOF > $HOME/.pypirc
+        [distutils]
+        index-servers=
+          onedev
+
+        [onedev]
+        repository=http://@secret:ip@/limo-games/~pypi
+        username=@job_token@
+        password=@secret:access-token@
+        EOF
+
+        pip install twine
+
+        twine upload --repository onedev limo_games-1.*
+
+        cd /onedev-build/workspace/
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Create NPM (Limo-Games)
+  jobExecutor: External-Pi3B-Plus
+  steps:
+  - !CheckoutStep
+    name: Get Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Generate and Upload NPM Package
+    runInContainer: true
+    image: node:22.13.1-bookworm
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        cd sources/nodejs/limo-games
+
+        npm install
+        npm pack
+
+        npm config set @@limo-games:registry http://@secret:ip@/limo-games/~npm/
+
+        # Use job token to tell OneDev the build publishing the package
+        # Job secret 'access-token' should be defined in project build setting as an access token with package write permission
+
+        npm config set -- '//@secret:ip@/limo-games/~npm/:_authToken' "@job_token@:@secret:access-token@"
+
+        npm publish
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Create PyPi (Py-Apps)
+  jobExecutor: External-Pi3B-Plus
+  steps:
+  - !CheckoutStep
+    name: Get Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Build-WHL
+    runInContainer: true
+    image: arm64v8/python:3.8
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        pip install --upgrade pip
+        pip install build
+
+        cd sources/pypi/py-apps
+
+        pip wheel .
+
+        # Use job token to tell OneDev the build publishing the package
+        # Job secret 'access-token' should be defined in project build setting as an access token with package write permission
+
+        cat << EOF > $HOME/.pypirc
+        [distutils]
+        index-servers=
+          onedev
+
+        [onedev]
+        repository=http://@secret:ip@/limo-games/~pypi
+        username=@job_token@
+        password=@secret:access-token@
+        EOF
+
+        pip install twine
+
+        ls
+        twine upload --repository onedev py_apps-0.*
+
+        cd /onedev-build/workspace/
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Create Deb (Py-Apps)
+  jobExecutor: External-Pi4
+  steps:
+  - !CheckoutStep
+    name: Get Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Create Deb
+    runInContainer: true
+    image: debian:latest
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        apt update && apt install -y python3 python3-pip python3-stdeb dh-python
+
+        pip3 install setuptools wheel --break-system-packages
+
+        cd sources/pypi/py-apps/
+
+        python3 setup.py --command-packages=stdeb.command bdist_deb
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: Publish Artifatcs
+    artifacts: sources/pypi/py-apps/deb_dist/*.deb
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Build .tar.xz
+  jobExecutor: External-Pi4
+  steps:
+  - !CheckoutStep
+    name: Get Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Build ZIP
+    runInContainer: true
+    image: debian:latest
+    interpreter: !ShellInterpreter
+      shell: bash
+      commands: |
+        # Alle benötigten Tools installieren (falls noch nicht installiert)
+        apt-get update && apt-get install -y sed tar xz-utils
+
+        ls
+
+        # Alle Vorkommen von "/limowebsite/", "/limowebsite/" und "https:///limowebsite/" in allen Dateien ersetzen
+        find . -type f -exec sed -i -e 's|/limowebsite/|/|g' \
+                                      -e 's|/limowebsite/|/|g' \
+                                      -e 's|https:///limowebsite/|/|g' {} \;
+
+        # Alle Dateien und Verzeichnisse im aktuellen Verzeichnis in eine .tar.xz-Datei komprimieren
+        tar -caf latest.tar.xz *
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: Publish XZ
+    artifacts: latest.tar.xz
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Github
+  jobExecutor: Local-Pi5
+  steps:
+  - !CheckoutStep
+    name: Get Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: true
+    withSubmodules: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Edit Code + Github Upload
+    runInContainer: true
+    image: debian:latest
+    interpreter: !DefaultInterpreter
+      commands: |
+        # Sicherstellen, dass Git installiert ist
+        apt-get update && apt-get install -y git
+
+        # Lösche das bestehende Git-Repository, falls vorhanden
+        rm -rf .git
+
+        # Suche und ersetze alle relevanten Pfade im Code
+        find . -type f -exec sed -i -e 's|/limowebsite/|/limowebsite/|g' \
+                                      -e 's|/limowebsite/|/limowebsite/|g' \
+                                      -e 's|https:///limowebsite/|/limowebsite/|g' {} \;
+
+        # Initialisiere das Git-Repository
+        git init
+
+        # Füge den Hauptserver als origin hinzu (dies ist der Hauptserver)
+        git remote add origin https:///limowebsite//limo-games.git
+
+        # Füge GitHub als zusätzlichen Remote (Mirror) hinzu
+        git remote add github https://@secret:gh@@@github.com/Limo123123/limowebsite.git
+
+        # Setze deine Git-Konfiguration (Name und Email)
+        git config --global user.name "limo123123"
+        git config --global user.email "@secret:email@"
+
+        sed -i '1s/^/# MIRROR\n\nThis is the Master Branch. Changes have been applied automatically and won'"'"'t work to 100%\n\n/' README.md
+
+
+        # Füge alle Dateien hinzu
+        git add .
+
+        # Mach den ersten Commit
+        git commit -m "Code Upload"
+
+        # Push auf GitHub (als Mirror)
+        git push github master --force
+
+        # Warten, um sicherzustellen, dass der erste Push abgeschlossen ist
+        sleep 5
+
+        # Suche und ersetze erneut (2. Durchlauf für den neuen Branch)
+        find . -type f -exec sed -i -e 's|/limowebsite/|./|g' {} \;
+
+        # Neuen Branch erstellen
+        git checkout -b dl
+
+        # Add Custom Change
+
+        sed -i '1s/^/# MIRROR\n\nThis is the DL (Download) Branch. Changes have been applied automatically and won'"'"'t work to 100%\n\n/' README.md
+
+
+        # Änderungen zum neuen Branch hinzufügen
+        git add .
+
+        # Commit für den alternativen Branch
+        git commit -m "Upload to DL Branch"
+
+        # Push den neuen Branch auf GitHub
+        git push github dl --force
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Errate die Zahl</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #message {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        #input {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Errate die Zahl</h1>
+    <p>Ich habe eine Zahl zwischen 1 und 100 gewählt. Versuche sie zu erraten!</p>
+    <input type="number" id="input" min="1" max="100" required>
+    <button id="button">Erraten</button>
+    <div id="message"></div>
+
+    <script>
+        const targetNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+
+        const input = document.getElementById("input");
+        const button = document.getElementById("button");
+        const message = document.getElementById("message");
+
+        button.addEventListener("click", () => {
+            const guess = parseInt(input.value);
+            attempts++;
+
+            if (guess === targetNumber) {
+                message.textContent = `Herzlichen Glückwunsch! Du hast die Zahl ${targetNumber} in ${attempts} Versuchen erraten.`;
+                input.disabled = true;
+                button.disabled = true;
+            } else if (guess < targetNumber) {
+                message.textContent = "Die gesuchte Zahl ist höher. Versuche es erneut.";
+            } else {
+                message.textContent = "Die gesuchte Zahl ist niedriger. Versuche es erneut.";
+            }
+        });
+    </script>
+</body>
+</html>

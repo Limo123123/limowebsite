@@ -1,0 +1,39 @@
+{
+    "name": "Limo Games",
+    "short_name": "limo-games",
+    "description": "Eine Spiele Webseite",
+    "start_url": "/limo-games/~site",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4CAF50",
+    "icons": [
+      {
+        "src": "icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "icons/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+
+      "screenshots": [
+    {
+      "src": "/limowebsite/screenshots/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+
+    {
+      "src": "/limowebsite/screenshots/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+
+    ]
+}
+  

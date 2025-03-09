@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple HTML Browser</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+    #browser {
+        width: 100%;
+        height: calc(100% - 30px); /* Höhe des Eingabefeldes abziehen */
+        border: none;
+    }
+    #address-bar {
+        width: 100%;
+        height: 30px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+
+<input type="text" id="address-bar" placeholder="Enter URL">
+<iframe id="browser" src="https://bing.com"></iframe>
+
+<script>
+    // JavaScript, um das URL-Eingabefeld zu überwachen und die URL im iframe zu laden
+    document.getElementById('address-bar').addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) { // 13 entspricht der Enter-Taste
+            var url = this.value.trim();
+            if (url !== '') {
+                document.getElementById('browser').src = url;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

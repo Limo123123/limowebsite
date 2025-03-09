@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limo Server Apt Repository</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #0066cc;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #0066cc;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #004080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Limo Server Apt Repository</h1>
+        <p>Wir freuen uns, Ihnen mitteilen zu können, dass der Limo-Server jetzt über ein eigenes Apt-Repository verfügt.</p>
+        <p>Sie können jetzt die neuesten und besten Pakete direkt von unserem Repository installieren.</p>
+        <p>Um das Repository zu nutzen, fügen Sie bitte die folgende Zeile zu Ihrer <code>/etc/apt/sources.list</code> Datei hinzu:</p>
+        <code>deb http://192.168.178.121/DONOTCOPY/my-apt-repo/ bookworm main</code>
+
+        <p>Beachten Sie, dass "bookworm" der Codename Ihrer Debian-Version sein könnte. Falls ihr System auf Bullseye basiert haben wir dafür auch einen Bereich.</p>
+        <code>deb http://192.168.178.121/DONOTCOPY/my-apt-repo/ bullseye main</code>
+
+        <a class="button" href="http://limo/DONOTCOPY/my-apt-repo/">Zum Apt Repository</a>
+    </div>
+</body>
+</html>

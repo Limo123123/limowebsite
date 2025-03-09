@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dropdown Menü</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="dropdown">
+    <label for="platform">Platform:</label>
+    <input type="radio" id="web" name="platform" value="web" onchange="updateOptions()"> Web
+    <input type="radio" id="android" name="platform" value="android" onchange="updateOptions()"> Android
+    <br>
+    <label for="app">App:</label>
+    <input type="radio" id="limoWeb" name="app" value="limoWeb" onchange="updateOptions()"> Limo Web
+    <input type="radio" id="limoGames" name="app" value="limoGames" onchange="updateOptions()"> Limo Games
+    <br>
+    <label for="version">Version:</label>
+    <input type="radio" id="version1" name="version" value="1.0"> 1.0
+    <input type="radio" id="version2" name="version" value="2.0"> 2.0
+    <input type="radio" id="version3" name="version" value="3.0"> 3.0
+    <br>
+    <button onclick="download()">Download</button>
+  </div>
+  <!-- <img src="http://limo/bilder/opengapps.png" alt="GApps Bild"> -->
+  <script src="script.js"></script>
+</body>
+</html>

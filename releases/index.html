@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Releases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .release {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+        .release:last-child {
+            border-bottom: none;
+        }
+        .release h2 { margin: 0;
+        }
+        .release-info { margin: 5px 0; color: #555; 
+
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .platform {
+            font-size: 14px;
+            color: gray;
+        }
+        .description {
+            margin: 10px 0;
+        }
+        .download {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .download:hover {
+            background: #0056b3;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #eef;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Limo Games - Releases</h1>
+        
+        <div class="release">
+            <h2>Version 1.0.0</h2>
+            <p class="release-info">First Stable Shell Version</p>
+            <div class="platform">Plattform: Windows/x64</div>
+            <a href="/limowebsite/downloads/dl/windows/limo-games-1.0.0.exe" class="download">Download .exe</a>
+        </div>
+
+        <div class="release">
+            <h2>Version 1.0.1</h2>
+            <p class="release-info">Second Version With UI</p>
+            <div class="platform">Plattform: Windows/x64</div>
+            <a href="/limowebsite/downloads/dl/windows/limo-games-1.0.1-ui.exe" class="download">Download .exe</a>
+        </div>
+        
+        <div class="release">
+            <h2>Version 1.0.2</h2>
+            <p class="release-info">Python .whl für Linux Arm64</p>
+            <div class="platform">Plattform: Linux/arm64</div>
+            <a href="/limowebsite/downloads/dl/linux/index.html" class="download">Go to Installation Page</a>
+        </div>
+        
+    </div>
+</body>
+</html>

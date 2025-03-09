@@ -1,0 +1,11 @@
+<?php
+if (isset($_COOKIE['show_content'])) {
+    $indexFilePath = $_COOKIE['show_content'];
+
+    // HTML-Inhalt anzeigen
+    $htmlContent = file_get_contents($indexFilePath);
+    echo $htmlContent;
+} else {
+    echo 'Kein Inhalt zum Anzeigen gefunden.';
+}
+?>

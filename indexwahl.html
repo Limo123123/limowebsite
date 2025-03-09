@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/limowebsite/bilder/limoico/limo.ico">
+  <title>Select Design - Powered by LimoOS</title>
+  <style>
+    /* Base Styles */
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #28a745;
+      --light-bg: #f8f9fa;
+      --card-bg: #fff;
+      --text-color: #333;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e2e6ea, #f8f9fa);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    /* Card Container */
+    .card {
+      background-color: var(--card-bg);
+      max-width: 600px;
+      width: 90%;
+      margin: 20px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    form {
+      width: 100%;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .option:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Custom Radio Styles */
+    .option input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      margin-right: 15px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .option input[type="radio"]:checked::before {
+      content: '';
+      display: block;
+      width: 12px;
+      height: 12px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+    }
+
+    .option label {
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      background-color: var(--secondary-color);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Select Design - Powered by LimoOS</h1>
+
+    <form onsubmit="return redirect()">
+      <div class="option">
+        <input type="radio" id="new" name="design" value="new" checked>
+        <label for="new">Use the New Design (Recommended)</label>
+      </div>
+
+      <div class="option">
+        <input type="radio" id="old" name="design" value="old">
+        <label for="old">Use the Old Design</label>
+      </div>
+
+      <div class="option">
+        <input type="radio" id="v3" name="design" value="v3">
+        <label for="v3">Use the Design V3</label>
+      </div>
+
+      <button type="submit">Continue</button>
+    </form>
+  </div>
+
+  <script>
+    function redirect() {
+      var selectedDesign = document.querySelector('input[name="design"]:checked');
+      if (selectedDesign) {
+        var designValue = selectedDesign.value;
+        var redirectUrl;
+        switch (designValue) {
+          case "new":
+            redirectUrl = "/limowebsite/plc/webvisuho";
+            break;
+          case "old":
+            redirectUrl = "/limowebsite/indexhome.html";
+            break;
+          case "v3":
+            redirectUrl = "/limowebsite/home/v3/";
+            break;
+        }
+        var metaTag = document.createElement('meta');
+        metaTag.httpEquiv = "refresh";
+        metaTag.content = "0;url=" + redirectUrl;
+        document.head.appendChild(metaTag);
+        return false; // Prevent form submission
+      } else {
+        alert("Please select a design option before continuing.");
+        return false;
+      }
+    }
+  </script>
+
+</body>
+</html>

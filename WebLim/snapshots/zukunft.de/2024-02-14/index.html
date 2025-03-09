@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zukunftsvorhersage</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        #prediction { font-size: 1.5em; margin-top: 20px; }
+        button { padding: 10px 15px; font-size: 1em; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Willkommen bei Zukunft.de</h1>
+    <p>Klicke auf den Button, um deine Zukunft vorherzusagen!</p>
+    <button onclick="predictFuture()">Zukunft vorhersagen</button>
+    <p id="prediction"></p>
+
+    <script>
+        const predictions = [
+            "Du wirst bald eine großartige Idee haben!",
+            "Ein unerwarteter Besucher bringt gute Nachrichten.",
+            "Du wirst eine neue Fähigkeit lernen, die dir sehr nützlich sein wird.",
+            "Ein großes Abenteuer wartet auf dich!",
+            "Ein glücklicher Zufall wird dein Leben verändern.",
+            "Dein nächstes Geschenck wird ein angebissener Apfel sein"
+        ];
+        
+        function predictFuture() {
+            const randomIndex = Math.floor(Math.random() * predictions.length);
+            document.getElementById("prediction").textContent = predictions[randomIndex];
+        }
+    </script>
+</body>
+</html>

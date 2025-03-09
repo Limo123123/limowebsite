@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTML5 Verschlüssler</title>
+</head>
+<body>
+  <h1>HTML5 Verschlüssler</h1>
+  <form>
+    <label for="input">Eingabe:</label>
+    <input type="text" id="input">
+    <br>
+    <label for="output">Ausgabe:</label>
+    <input type="text" id="output">
+    <br>
+    <input type="button" value="Verschlüsseln" onclick="verschluesseln()">
+    <input type="button" value="Entschlüsseln" onclick="entschluesseln()">
+  </form>
+
+  <script>
+    function verschluesseln() {
+      var input = document.getElementById("input").value;
+      var output = "";
+
+      for (var i = 0; i < input.length; i++) {
+        var charCode = input.charCodeAt(i);
+        output += charCode + ",";
+      }
+
+      document.getElementById("output").value = output;
+    }
+
+    function entschluesseln() {
+      var input = document.getElementById("input").value;
+      var output = "";
+
+      var charCodes = input.split(",");
+
+      for (var i = 0; i < charCodes.length; i++) {
+        var charCode = parseInt(charCodes[i]);
+        output += String.fromCharCode(charCode);
+      }
+
+      document.getElementById("output").value = output;
+    }
+  </script>
+</body>
+</html>

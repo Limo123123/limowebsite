@@ -1,0 +1,25 @@
+{
+  "name": "@limo-games/limo-games",
+  "version": "1.0.0",
+  "description": "An NPM Package for the Limo-Games Website",
+  "main": "index.js",
+  "type": "module",
+
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \\\"No tests specified\\\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https:///limowebsite//limo-games"
+  },
+  "author": "Florian Töns <Limo Open Source Project>",
+  "license": "GPL-3.0-or-later",
+  
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "adm-zip": "^0.5.10",
+    "node-fetch": "^3.3.2",
+    "pm2": "^5.4.3"
+  }
+}

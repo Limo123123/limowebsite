@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LimoLights</title>
+</head>
+<body>
+    <h1>Wähle eine Farbe</h1>
+    <input type="color" id="color-picker">
+    <p>Aktuelle Farbe: <span id="current-color">#FF0000</span></p>
+
+    <script>
+        const colorPicker = document.getElementById('color-picker');
+        const currentColorDisplay = document.getElementById('current-color');
+
+        colorPicker.addEventListener('input', (event) => {
+            const color = event.target.value;
+            currentColorDisplay.textContent = color;
+
+            // Sende die Farbe an den Pi 4 Backend-Server
+            fetch('http://192.168.178.121:5000/set_color', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ color })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Farbe gespeichert:", data);
+            })
+            .catch(error => console.error("Fehler beim Senden der Farbe:", error));
+        });
+    </script>
+</body>
+</html>

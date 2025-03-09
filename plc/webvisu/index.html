@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Party Clock</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #container {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+    }
+
+    #clock {
+      width: 200px;
+      height: 200px;
+      position: relative;
+      border-radius: 50%;
+      background-color: #f8f8f8;
+      border: 5px solid #333;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .hour, .minute, .second {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #333;
+      transform-origin: bottom center;
+      transition: transform 0.5s linear; /* Verlängere die Übergangszeit */
+    }
+
+    .hour {
+      width: 6px;
+      height: 50px;
+    }
+
+    .minute {
+      width: 4px;
+      height: 70px;
+    }
+
+    .second {
+      width: 2px;
+      height: 80px;
+      background-color: red;
+    }
+
+    #labels {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 0.8em;
+      color: #333;
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #labels span {
+      position: absolute;
+    }
+
+    #labels span:nth-child(1) { transform: rotate(30deg) translateY(-90px); }
+    #labels span:nth-child(2) { transform: rotate(60deg) translateY(-90px); }
+    #labels span:nth-child(3) { transform: rotate(90deg) translateY(-90px); }
+    #labels span:nth-child(4) { transform: rotate(120deg) translateY(-90px); }
+    #labels span:nth-child(5) { transform: rotate(150deg) translateY(-90px); }
+    #labels span:nth-child(6) { transform: rotate(180deg) translateY(-90px); }
+    #labels span:nth-child(7) { transform: rotate(210deg) translateY(-90px); }
+    #labels span:nth-child(8) { transform: rotate(240deg) translateY(-90px); }
+    #labels span:nth-child(9) { transform: rotate(270deg) translateY(-90px); }
+    #labels span:nth-child(10) { transform: rotate(300deg) translateY(-90px); }
+    #labels span:nth-child(11) { transform: rotate(330deg) translateY(-90px); }
+    #labels span:nth-child(12) { transform: rotate(0deg) translateY(-90px); }
+
+    #partyButton, #stopButton {
+      font-size: 1em;
+      padding: 10px;
+      cursor: pointer;
+      background-color: #FFD700; /* Gold color */
+      border: none;
+      color: #333;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="container">
+  <div id="clock">
+    <div class="hour"></div>
+    <div class="minute"></div>
+    <div class="second"></div>
+    <div id="labels">
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+      <span>6</span>
+      <span>7</span>
+      <span>8</span>
+      <span>9</span>
+      <span>10</span>
+      <span>11</span>
+      <span>12</span>
+    </div>
+  </div>
+  <button id="partyButton" onclick="startParty()">Party Time!</button>
+  <button id="stopButton" onclick="stopParty()">Stop Party</button>
+</div>
+
+<script>
+  let running = false;
+  let degreesPerSecond = 1;
+  let hourHand = document.querySelector('.hour');
+  let minuteHand = document.querySelector('.minute');
+  let secondHand = document.querySelector('.second');
+
+  function startParty() {
+    running = !running;
+    if (running) {
+      document.getElementById('partyButton').innerText = 'Stop Party';
+      updateClock();
+    } else {
+      document.getElementById('partyButton').innerText = 'Party Time!';
+    }
+  }
+
+  function stopParty() {
+    running = false;
+    slowDownClock();
+    document.getElementById('partyButton').innerText = 'Party Time!';
+  }
+
+  function updateClock() {
+    if (running) {
+      let now = new Date();
+      let hours = now.getHours() % 12;
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+
+      let hourDegrees = (hours + minutes / 60) * 30; // 30 degrees per hour
+      let minuteDegrees = (minutes + seconds / 60) * 6; // 6 degrees per minute
+      let secondDegrees = seconds * degreesPerSecond; // 6 degrees per second
+
+      hourHand.style.transform = `translate(-50%, -100%) rotate(${hourDegrees}deg)`;
+      minuteHand.style.transform = `translate(-50%, -100%) rotate(${minuteDegrees}deg)`;
+      secondHand.style.transform = `translate(-50%, -100%) rotate(${secondDegrees}deg)`;
+
+      setTimeout(updateClock, 1000 / degreesPerSecond);
+
+      // Beschleunige die Uhr für die Party!
+      degreesPerSecond += 0.05;
+    }
+  }
+
+  function slowDownClock() {
+    const slowDownInterval = setInterval(function () {
+      if (degreesPerSecond > 0.05) {
+        degreesPerSecond -= 0.05;
+      } else {
+        degreesPerSecond = 0.05;
+        clearInterval(slowDownInterval);
+      }
+    }, 500);
+  }
+</script>
+
+</body>
+</html>

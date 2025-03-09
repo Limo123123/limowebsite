@@ -1,0 +1,11 @@
+<<<<<<< HEAD
+# Ignoriere große Dateien (z.B. Videos, ISOs)
+*.mp4
+*.iso
+*.zip
+*.tar.gz
+=======
+sources/eos/eos.py
+
+downloads/limo-games.tar.xz
+>>>>>>> f2bade7165cc7ba311d8f082907bdffd74a97c8c

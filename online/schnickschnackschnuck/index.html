@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schere, Stein, Papier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #message {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        #buttons {
+            margin-top: 20px;
+        }
+
+        .button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Schere, Stein, Papier</h1>
+    <p>Wähle eine Option:</p>
+    <div id="buttons">
+        <button class="button" id="rock">Stein</button>
+        <button class="button" id="paper">Papier</button>
+        <button class="button" id="scissors">Schere</button>
+    </div>
+    <div id="message"></div>
+
+    <script>
+        const options = ["Stein", "Papier", "Schere"];
+
+        const rockButton = document.getElementById("rock");
+        const paperButton = document.getElementById("paper");
+        const scissorsButton = document.getElementById("scissors");
+        const message = document.getElementById("message");
+
+        function computerPlay() {
+            const randomIndex = Math.floor(Math.random() * options.length);
+            return options[randomIndex];
+        }
+
+        function playRound(playerSelection, computerSelection) {
+            if (playerSelection === computerSelection) {
+                return "Unentschieden!";
+            } else if (
+                (playerSelection === "Stein" && computerSelection === "Schere") ||
+                (playerSelection === "Papier" && computerSelection === "Stein") ||
+                (playerSelection === "Schere" && computerSelection === "Papier")
+            ) {
+                return `Du gewinnst! ${playerSelection} schlägt ${computerSelection}.`;
+            } else {
+                return `Du verlierst! ${computerSelection} schlägt ${playerSelection}.`;
+            }
+        }
+
+        function resetMessage() {
+            message.textContent = "";
+        }
+
+        rockButton.addEventListener("click", () => {
+            resetMessage();
+            const playerSelection = "Stein";
+            const computerSelection = computerPlay();
+            message.textContent = playRound(playerSelection, computerSelection);
+        });
+
+        paperButton.addEventListener("click", () => {
+            resetMessage();
+            const playerSelection = "Papier";
+            const computerSelection = computerPlay();
+            message.textContent = playRound(playerSelection, computerSelection);
+        });
+
+        scissorsButton.addEventListener("click", () => {
+            resetMessage();
+            const playerSelection = "Schere";
+            const computerSelection = computerPlay();
+            message.textContent = playRound(playerSelection, computerSelection);
+        });
+    </script>
+</body>
+</html>

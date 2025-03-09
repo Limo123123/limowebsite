@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Objekt Ersteller</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/TransformControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/exporters/OBJExporter.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #toolbar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <button onclick="addCube()">Würfel hinzufügen</button>
+        <button onclick="addSphere()">Kugel hinzufügen</button>
+        <button onclick="clearScene()">Szene leeren</button>
+        <button onclick="exportSceneOBJ()">Exportieren (OBJ)</button>
+        <input type="color" id="colorPicker" value="#ffffff" onchange="changeColor()">
+        <label>Größe: <input type="range" id="sizeSlider" min="0.1" max="3" step="0.1" value="1" onchange="resizeObject()"></label>
+        <button onclick="setTranslateMode()">Verschieben</button>
+        <button onclick="disableTransformControls()">Verschieben beenden</button>
+    </div>
+    <script>
+        let scene = new THREE.Scene();
+        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        let renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        let controls = new THREE.OrbitControls(camera, renderer.domElement);
+        let transformControls = new THREE.TransformControls(camera, renderer.domElement);
+        transformControls.addEventListener('change', () => renderer.render(scene, camera));
+        transformControls.addEventListener('dragging-changed', function (event) {
+            controls.enabled = !event.value;
+        });
+        scene.add(transformControls);
+        
+        let light = new THREE.AmbientLight(0xffffff);
+        scene.add(light);
+        camera.position.z = 5;
+        
+        let selectedObject = null;
+
+        function addCube() {
+            let geometry = new THREE.BoxGeometry();
+            let material = new THREE.MeshStandardMaterial({color: Math.random() * 0xffffff});
+            let cube = new THREE.Mesh(geometry, material);
+            cube.position.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+            scene.add(cube);
+        }
+        
+        function addSphere() {
+            let geometry = new THREE.SphereGeometry(0.5, 32, 32);
+            let material = new THREE.MeshStandardMaterial({color: Math.random() * 0xffffff});
+            let sphere = new THREE.Mesh(geometry, material);
+            sphere.position.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+            scene.add(sphere);
+        }
+        
+        function clearScene() {
+            for (let i = scene.children.length - 1; i >= 0; i--) {
+                if (scene.children[i] instanceof THREE.Mesh) {
+                    scene.remove(scene.children[i]);
+                }
+            }
+        }
+        
+        function exportSceneOBJ() {
+            let exporter = new THREE.OBJExporter();
+            let objData = exporter.parse(scene);
+            let blob = new Blob([objData], { type: "text/plain" });
+            let a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "scene.obj";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        function changeColor() {
+            if (selectedObject) {
+                let color = document.getElementById("colorPicker").value;
+                selectedObject.material.color.set(color);
+            }
+        }
+        
+        function resizeObject() {
+            if (selectedObject) {
+                let scale = document.getElementById("sizeSlider").value;
+                selectedObject.scale.set(scale, scale, scale);
+            }
+        }
+        
+        function setTranslateMode() {
+            if (selectedObject) {
+                transformControls.setMode('translate');
+                transformControls.attach(selectedObject);
+            }
+        }
+        
+        function disableTransformControls() {
+            transformControls.detach();
+            selectedObject = null;
+        }
+        
+        window.addEventListener("click", (event) => {
+            let mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+            let raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            let intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0) {
+                selectedObject = intersects[0].object;
+                transformControls.attach(selectedObject);
+            }
+        });
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

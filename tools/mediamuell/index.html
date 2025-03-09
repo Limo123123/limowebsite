@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Faster" Download</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fb;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 30px;
+            font-size: 36px;
+        }
+
+        .container {
+            text-align: center;
+            padding: 30px;
+            background: #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .input-container input {
+            padding: 12px;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box; /* Stellt sicher, dass das Padding die Gesamtbreite nicht überschreitet */
+        }
+
+        #download-btn {
+            padding: 14px 25px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%; /* Button nimmt die gesamte Breite des Containers ein */
+            max-width: 600px;
+        }
+
+        #download-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        #progress-container {
+            width: 100%;
+            max-width: 600px;
+            background: #e0e0e0;
+            margin: 20px auto;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #progress-bar {
+            height: 35px;
+            width: 0;
+            background-color: #4CAF50;
+            text-align: center;
+            color: white;
+            line-height: 35px;
+            font-weight: bold;
+            border-radius: 25px;
+            transition: width 0.3s ease;
+        }
+
+        #speed {
+            margin-top: 15px;
+            font-size: 20px;
+            color: #666;
+        }
+
+        #speed span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        #error-message {
+            color: red;
+            font-size: 16px;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>"Faster" Download</h1>
+        <div class="input-container">
+            <input type="text" id="url" placeholder="Download-Link eingeben (mit http:// oder https://)" />
+            <input type="text" id="filename" placeholder="Dateiname mit Endung (z.B. datei.zip)" />
+        </div>
+        <button id="download-btn" onclick="startDownload()">📥 Datei herunterladen</button>
+        <div id="error-message">⚠️ Bitte eine gültige URL mit http:// oder https:// eingeben!</div>
+        <div id="progress-container">
+            <div id="progress-bar">0%</div>
+        </div>
+        <div id="speed">⏳ Geschwindigkeit (Mit sehr hoher Aktualisierungsrate): <span>0 MB/s</span></div>
+    </div>
+
+    <script>
+        async function startDownload() {
+            const url = document.getElementById("url").value.trim();
+            const filename = document.getElementById("filename").value.trim();
+
+            // Überprüfen, ob die URL mit http:// oder https:// beginnt
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                document.getElementById("error-message").style.display = "block";
+                return;
+            } else {
+                document.getElementById("error-message").style.display = "none";
+            }
+
+            // Eingabe validieren
+            if (!filename) {
+                alert("Bitte einen Dateinamen mit Endung angeben!");
+                return;
+            }
+
+            const response = await fetch(url);
+            const contentLength = response.headers.get("content-length");
+
+            if (!response.ok) {
+                alert("Fehler beim Download!");
+                return;
+            }
+
+            if (!contentLength) {
+                alert("Server gibt keine Dateigröße zurück.");
+                return;
+            }
+
+            const totalSize = parseInt(contentLength, 10);
+            let receivedSize = 0;
+            let lastTime = Date.now();
+            let lastSize = 0;
+
+            const reader = response.body.getReader();
+            const chunks = [];
+
+            let speedHistory = [];
+
+            // Berechnet den gleitenden Durchschnitt der Geschwindigkeit
+            function smoothSpeed(speed) {
+                speedHistory.push(speed);
+                if (speedHistory.length > 5) speedHistory.shift();  // Behalte nur die letzten 5 Werte
+                const avgSpeed = speedHistory.reduce((acc, val) => acc + val, 0) / speedHistory.length;
+                return avgSpeed;
+            }
+
+            function updateProgress() {
+                const percent = (receivedSize / totalSize) * 100;
+                document.getElementById("progress-bar").style.width = percent + "%";
+                document.getElementById("progress-bar").textContent = Math.round(percent) + "%";
+
+                const currentTime = Date.now();
+                const timeDiff = (currentTime - lastTime) / 1000; // Sekunden
+                const sizeDiff = receivedSize - lastSize; // Bytes
+                const speedMB = (sizeDiff / timeDiff) / (1024 * 1024); // MB/s
+
+                // Zeigt die durchschnittliche Geschwindigkeit an
+                const avgSpeed = smoothSpeed(speedMB);
+                document.getElementById("speed").innerHTML = `⏳ Geschwindigkeit: <span>${avgSpeed.toFixed(2)} MB/s</span>`;
+
+                lastTime = currentTime;
+                lastSize = receivedSize;
+            }
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                chunks.push(value);
+                receivedSize += value.length;
+                updateProgress();
+            }
+
+            // Erstelle Blob-URL und starte Download
+            const blob = new Blob(chunks);
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = filename;  // Dateiname aus Eingabe
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(blobUrl);
+        }
+    </script>
+
+  <!-- Footer -->
+  <footer class="">
+    <p>&copy; 2025 Limo Open Source Project. "Faster" Downloader. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

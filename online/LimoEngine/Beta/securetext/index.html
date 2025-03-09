@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buchstaben-zu-Zahl-Verschlüsselung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin: 20px auto;
+        }
+
+        #encrypt-button, #decrypt-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buchstaben-zu-Zahl-Verschlüsselung</h1>
+    <p>Gib einen Text ein und klicke auf "Verschlüsseln", um die Buchstaben in Zahlen umzuwandeln (A=7, B=14, usw.), oder gib Zahlen ein (mit 6 für Leerzeichen) und klicke auf "Entschlüsseln", um den Text wiederherzustellen:</p>
+    <input type="text" id="input" placeholder="Gib Text ein">
+    <button id="encrypt-button">Verschlüsseln</button>
+    <button id="decrypt-button">Entschlüsseln</button>
+    <div id="output"></div>
+
+    <script>
+        const encryptButton = document.getElementById("encrypt-button");
+        const decryptButton = document.getElementById("decrypt-button");
+        const input = document.getElementById("input");
+        const output = document.getElementById("output");
+
+        encryptButton.addEventListener("click", () => {
+            const text = input.value;
+            const encryptedText = encryptText(text);
+            output.textContent = `Verschlüsselt: ${encryptedText}`;
+        });
+
+        decryptButton.addEventListener("click", () => {
+            const numbers = input.value.split(" ");
+            const decryptedText = decryptNumbers(numbers);
+            output.textContent = `Entschlüsselt: ${decryptedText}`;
+        });
+
+        function encryptText(text) {
+            const encryptedArray = [];
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === " ") {
+                    encryptedArray.push("6");
+                } else {
+                    const charCode = char.charCodeAt(0) + 7;
+                    encryptedArray.push(charCode.toString());
+                }
+            }
+            return encryptedArray.join(" ");
+        }
+
+        function decryptNumbers(numbers) {
+            const decryptedArray = [];
+            for (const num of numbers) {
+                if (num === "6") {
+                    decryptedArray.push(" ");
+                } else {
+                    const charCode = parseInt(num) - 7;
+                    const char = String.fromCharCode(charCode);
+                    decryptedArray.push(char);
+                }
+            }
+            return decryptedArray.join("");
+        }
+    </script>
+</body>
+</html>

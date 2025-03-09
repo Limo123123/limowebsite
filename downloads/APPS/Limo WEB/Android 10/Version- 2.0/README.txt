@@ -1,0 +1,1 @@
+No refresh button anymore
