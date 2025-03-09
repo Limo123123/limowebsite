@@ -1,5 +1,9 @@
 # MIRROR
 
+This is the DL (Download) Branch. Changes have been applied automatically and won't work to 100%
+
+# MIRROR
+
 This is the Master Branch. Changes have been applied automatically and won't work to 100%
 
 NOTE: This is just the RAW Code of the Limo Games Website Project. This repository is just used as an HOST and for fast changes.
@@ -10,7 +14,7 @@ And even if not, i would allow to do this. I jused in this thing other repos to.
 
 # How do I get to the Page?
 
-Follow [This](https:///limowebsite//limo-games/~site) link
+Follow [This](https://.//limo-games/~site) link
 
 # Something isn't working
 This Page currently doesent support PHP so some things wont work.
@@ -21,55 +25,55 @@ _Licensed under the "GNU General Public License v3.0"_
 
 # Links
 
-- [Game 1](https:///limowebsite//limowebsite/1.html)
-- [Game 2](https:///limowebsite//limowebsite/2.html)
-- [Game 3](https:///limowebsite//limowebsite/3.html)
-- [Game 4](https:///limowebsite//limowebsite/4.html)
-- [Game 5](https:///limowebsite//limowebsite/5.html)
-- [Game 6](https:///limowebsite//limowebsite/6.html)
-- [Game 7](https:///limowebsite//limowebsite/7.html)
-- [Game 8](https:///limowebsite//limowebsite/8.html)
-- [Game 9](https:///limowebsite//limowebsite/9.html)
-- [Game 10](https:///limowebsite//limowebsite/10.html)
-- [Game 11 (Party!!!)](https:///limowebsite//limowebsite/11.html)
-- [Test Games](https:///limowebsite//limowebsite/testgames)
-- [Flappy Bird](https:///limowebsite//limowebsite/flappybird)
-- [News](https:///limowebsite//limowebsite/loader)
-- [2048](https:///limowebsite//limowebsite/2048/index.html)
-- [HexGL](https:///limowebsite//limowebsite/HexGL/index.html)
-- [Space Company](https:///limowebsite//limowebsite/SpaceCompany)
-- [Tower Game](https:///limowebsite//limowebsite/towergame)
-- [Paper Minecraft](https:///limowebsite//limowebsite/minecraft.html)
-- [Minecraft Limo Edition](https:///limowebsite//limowebsite/minecraftlimo.html)
-- [Snake](https:///limowebsite//limowebsite/snake.html)
-- [Hextris Lite](https:///limowebsite//limowebsite/hextrislite)
-- [Pacman](https:///limowebsite//limowebsite/Pacman)
-- [Not a Dash](https:///limowebsite//limowebsite/niklassachen/notadash.html)
-- [Browser Quest](https:///limowebsite//limowebsite/BrowserOeust)
-- [Errate die Zahl!](https:///limowebsite//limowebsite/randomnumber)
-- [Schnick Schnack Schnuck](https:///limowebsite//limowebsite/schnickschnackschnuck)
-- [Text Übersetzter Beta](https:///limowebsite//limowebsite/LimoEngine/Beta/securetext)
-- [List of Games](https:///limowebsite//limowebsite/recalgames)
-- [Limbeer Fütterung](https:///limowebsite//limowebsite/LimoEngine/limbeeressen.html)
-- [Limbeer Fütterung Automatisch](https:///limowebsite//limowebsite/LimoEngine/limoauto.html)
-- [Sandboxels](https:///limowebsite//limowebsite/LimoEngine/Sandboxels/)
-- [Minecraft V2](https:///limowebsite//limowebsite/minecraftv2/minecraft.html)
-- [Space Company V2](https:///limowebsite//limowebsite/phplibary/spacecompanyv2.php)
-- [Text Übersetzter V2](https:///limowebsite//limowebsite/LimoEngine/Beta/securetext/ve.php)
-- [3D City](https:///limowebsite//limowebsite/3dcity)
-- [Airport Sniper](https:///limowebsite//limowebsite/AirportSniper)
-- [Alien Invader](https:///limowebsite//limowebsite/AlienInvader)
-- [Game of Life](https:///limowebsite//limowebsite/GameOfLife/GameOfLife.html)
-- [ID Suchmaschine](https:///limowebsite//limowebsite/suchmaschine.html)
-- [Minecraft Tastatur](https:///limowebsite//limowebsite/minecraft/minecraft.html)
-- [Duolingo](https:///limowebsite//limowebsite/duolingo/duolingo.html)
-- [Downloads](https:///limowebsite//limowebsite/downloads/index.html)
-- [Impressum](https:///limowebsite//limowebsite/impressum.html)
+- [Game 1](https://././1.html)
+- [Game 2](https://././2.html)
+- [Game 3](https://././3.html)
+- [Game 4](https://././4.html)
+- [Game 5](https://././5.html)
+- [Game 6](https://././6.html)
+- [Game 7](https://././7.html)
+- [Game 8](https://././8.html)
+- [Game 9](https://././9.html)
+- [Game 10](https://././10.html)
+- [Game 11 (Party!!!)](https://././11.html)
+- [Test Games](https://././testgames)
+- [Flappy Bird](https://././flappybird)
+- [News](https://././loader)
+- [2048](https://././2048/index.html)
+- [HexGL](https://././HexGL/index.html)
+- [Space Company](https://././SpaceCompany)
+- [Tower Game](https://././towergame)
+- [Paper Minecraft](https://././minecraft.html)
+- [Minecraft Limo Edition](https://././minecraftlimo.html)
+- [Snake](https://././snake.html)
+- [Hextris Lite](https://././hextrislite)
+- [Pacman](https://././Pacman)
+- [Not a Dash](https://././niklassachen/notadash.html)
+- [Browser Quest](https://././BrowserOeust)
+- [Errate die Zahl!](https://././randomnumber)
+- [Schnick Schnack Schnuck](https://././schnickschnackschnuck)
+- [Text Übersetzter Beta](https://././LimoEngine/Beta/securetext)
+- [List of Games](https://././recalgames)
+- [Limbeer Fütterung](https://././LimoEngine/limbeeressen.html)
+- [Limbeer Fütterung Automatisch](https://././LimoEngine/limoauto.html)
+- [Sandboxels](https://././LimoEngine/Sandboxels/)
+- [Minecraft V2](https://././minecraftv2/minecraft.html)
+- [Space Company V2](https://././phplibary/spacecompanyv2.php)
+- [Text Übersetzter V2](https://././LimoEngine/Beta/securetext/ve.php)
+- [3D City](https://././3dcity)
+- [Airport Sniper](https://././AirportSniper)
+- [Alien Invader](https://././AlienInvader)
+- [Game of Life](https://././GameOfLife/GameOfLife.html)
+- [ID Suchmaschine](https://././suchmaschine.html)
+- [Minecraft Tastatur](https://././minecraft/minecraft.html)
+- [Duolingo](https://././duolingo/duolingo.html)
+- [Downloads](https://././downloads/index.html)
+- [Impressum](https://././impressum.html)
 
 
-- Or Go directly to Here: [https:///limowebsite//limowebsite/indexhome.html](https:///limowebsite//limowebsite/indexhome.html)
-- Or here: [https:///limowebsite//limowebsite/plc/webvisuho/](https:///limowebsite//limowebsite/plc/webvisuho/)
-- Or go directly [https:///limowebsite//limowebsite/indexwahl.html](https:///limowebsite//limowebsite/indexwahl.html)
+- Or Go directly to Here: [https://././indexhome.html](https://././indexhome.html)
+- Or here: [https://././plc/webvisuho/](https://././plc/webvisuho/)
+- Or go directly [https://././indexwahl.html](https://././indexwahl.html)
 
 # Installation
 For the Installation Guide. I will just say the same like on Github
@@ -104,7 +108,7 @@ For the Installation Guide. I will just say the same like on Github
 >```bash
 >docker run -d -p 80:80 limo123123/limo-webserver:wre
 >```
-> > If you want to pull it from this Server run: ```docker run -d -p 80:80 /limowebsite//limo-games/limo-webserver:wre4.0```
+> > If you want to pull it from this Server run: ```docker run -d -p 80:80 .//limo-games/limo-webserver:wre4.0```
 >
 >Enter after 'wre' The Release you Want z.b. 4.0
 

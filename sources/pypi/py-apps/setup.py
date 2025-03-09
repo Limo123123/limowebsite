@@ -16,7 +16,7 @@ setup(
     description='A Clone of Pi-Apps but for Python',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https:///limowebsite//limo-games',  # GitHub link if applicable
+    url='https://.//limo-games',  # GitHub link if applicable
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: GNU General Public License V3',

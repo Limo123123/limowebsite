@@ -16,7 +16,7 @@ setup(
     description="Limo-Games is a Webserver, with an fully Website",
     long_description="There is none Longer",
     long_description_content_type="text/markdown",
-    url="https:///limowebsite//limo-games/",  # Falls du es auf GitHub hostest
+    url="https://.//limo-games/",  # Falls du es auf GitHub hostest
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU 3 License",

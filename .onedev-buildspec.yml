@@ -204,10 +204,10 @@ jobs:
 
         ls
 
-        # Alle Vorkommen von "/limowebsite/", "/limowebsite/" und "https:///limowebsite/" in allen Dateien ersetzen
-        find . -type f -exec sed -i -e 's|/limowebsite/|/|g' \
-                                      -e 's|/limowebsite/|/|g' \
-                                      -e 's|https:///limowebsite/|/|g' {} \;
+        # Alle Vorkommen von "./", "./" und "https://./" in allen Dateien ersetzen
+        find . -type f -exec sed -i -e 's|./|/|g' \
+                                      -e 's|./|/|g' \
+                                      -e 's|https://./|/|g' {} \;
 
         # Alle Dateien und Verzeichnisse im aktuellen Verzeichnis in eine .tar.xz-Datei komprimieren
         tar -caf latest.tar.xz *
@@ -243,15 +243,15 @@ jobs:
         rm -rf .git
 
         # Suche und ersetze alle relevanten Pfade im Code
-        find . -type f -exec sed -i -e 's|/limowebsite/|/limowebsite/|g' \
-                                      -e 's|/limowebsite/|/limowebsite/|g' \
-                                      -e 's|https:///limowebsite/|/limowebsite/|g' {} \;
+        find . -type f -exec sed -i -e 's|./|./|g' \
+                                      -e 's|./|./|g' \
+                                      -e 's|https://./|./|g' {} \;
 
         # Initialisiere das Git-Repository
         git init
 
         # Füge den Hauptserver als origin hinzu (dies ist der Hauptserver)
-        git remote add origin https:///limowebsite//limo-games.git
+        git remote add origin https://.//limo-games.git
 
         # Füge GitHub als zusätzlichen Remote (Mirror) hinzu
         git remote add github https://@secret:gh@@@github.com/Limo123123/limowebsite.git
@@ -276,7 +276,7 @@ jobs:
         sleep 5
 
         # Suche und ersetze erneut (2. Durchlauf für den neuen Branch)
-        find . -type f -exec sed -i -e 's|/limowebsite/|./|g' {} \;
+        find . -type f -exec sed -i -e 's|./|./|g' {} \;
 
         # Neuen Branch erstellen
         git checkout -b dl
