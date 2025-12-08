@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="de"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeCards</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/assets_offline/1765221739527_all.min.css">
+</head>
+<body>
+    <header>
+        <h1>PokeCards</h1>
+        <div id="userInfo" style="display:none;">
+            <p id="currentUser "></p> <!-- Zeigt den aktuellen Benutzernamen an -->
+            <p id="pokeCoins">PokeCoins: 0</p> <!--  Hier werden die PokeCoins angezeigt -->
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#cards" id="cardsLink" style="display:none;" onclick="showSection('cards')">Alle Karten</a></li>
+                <li><a href="#myCards" id="myCardsLink" style="display:none;" onclick="showSection('myCards')">Meine Karten</a></li>
+                <li><a href="#store" id="storeLink" style="display:none;" onclick="showSection('store')">Store</a></li>
+                <li><a href="#battle" id="battleLink" style="display:none;" onclick="showSection('battle')">Kämpfen</a></li>
+                <li><a href="#logout" id="logoutBtn" style="display:none;">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="loginSection">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Benutzername" required="">
+                <button type="submit">Einloggen</button>
+            </form>
+            <p>Noch keinen Account? <a href="#registerSection" onclick="toggleSections('registerSection')">Registrieren</a></p>
+        </section>
+
+        <section id="registerSection" style="display:none;">
+            <h2>Registrierung</h2>
+            <form id="registerForm">
+                <input type="text" id="registerUsername" placeholder="Benutzername" required="">
+                <button type="submit">Registrieren</button>
+            </form>
+            <p>Bereits einen Account? <a href="#loginSection" onclick="toggleSections('loginSection')">Einloggen</a></p>
+        </section>
+
+        <section id="cards" style="display:none;">
+            <h2>Alle Karten</h2>
+            <input type="text" id="searchCards" placeholder="Suche nach Karten..." oninput="filterCards()">
+            <div id="allCards"></div>
+        </section>
+
+        <section id="myCards" style="display:none;">
+            <h2>Meine Karten</h2>
+            <div id="myCardsList"></div>
+            <h3>Verkauf von Karten</h3>
+            <button onclick="sellCard()">Karte verkaufen</button>
+        </section>
+
+        <section id="store" style="display:none;">
+            <h2>Store</h2>
+            <div id="boosterPrices">
+                <p>Booster Preise:</p>
+                <ul>
+                    <li>Common Booster: <span id="commonPrice">50</span> PokeCoins</li>
+                    <li>Rare Booster: <span id="rarePrice">100</span> PokeCoins</li>
+                    <li>Epic Booster: <span id="epicPrice">200</span> PokeCoins</li>
+                    <li>Legendary Booster: <span id="legendaryPrice">500</span> PokeCoins</li>
+                </ul>
+            </div>
+            <button onclick="buyBooster('common')">Kaufe Common Booster</button>
+            <button onclick="buyBooster('rare')">Kaufe Rare Booster</button>
+            <button onclick="buyBooster('epic')">Kaufe Epic Booster</button>
+            <button onclick="buyBooster('legendary')">Kaufe Legendary Booster</button>
+        </section>
+
+        <section id="battle" style="display:none;">
+            <h2>Kämpfen</h2>
+            <div id="battleContainer">
+                <div id="playerPokemon" class="pokemon">
+                    <h3>Dein Pokémon</h3>
+                    <img id="playerPokemonImage" src="" alt="Dein Pokémon">
+                    <p id="playerPokemonName"></p>
+                    <p id="playerPokemonHealth"></p>
+                    <p id="playerPokemonTeam">Team: Spieler</p>
+                </div>
+                <div id="aiPokemon" class="pokemon">
+                    <h3>Gegner Pokémon</h3>
+                    <img id="aiPokemonImage" src="" alt="Gegner Pokémon">
+                    <p id="aiPokemonName"></p>
+                    <p id="aiPokemonHealth"></p>
+                    <p id="aiPokemonTeam">Team: KI</p>
+                </div>
+            </div>
+            <button id="startBattleBtn">Starte Kampf</button>
+            <div id="battleResult" style="display:none;"></div>
+        </section>
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body></html>

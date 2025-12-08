@@ -1,0 +1,2 @@
+5.2|https://github.com/Limo123123/limowebserverinstaller/releases/download/5.2/latest.tar.xz
+5.0|https://github.com/Limo123123/limowebserverinstaller/releases/download/5.0/latest.tar.xz

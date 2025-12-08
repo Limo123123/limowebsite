@@ -1,0 +1,24 @@
+<html><head>
+  <link rel="icon" href="/bilder/limoico/limo.ico">
+<link rel="manifest" href="/manifest.json"><script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((registration) => {
+          console.log('Service Worker registriert:', registration);
+        })
+        .catch((error) => {
+          console.log('Service Worker Registrierung fehlgeschlagen:', error);
+        });
+    });
+  }
+</script><script>
+  document.location.href = "/login";
+</script></head>
+
+
+
+
+
+<body></body></html>

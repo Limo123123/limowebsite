@@ -1,0 +1,13 @@
+Package: www-limo-allb
+Version: 0.1
+Architecture: all
+Maintainer: Florian Toens
+Priority: optional
+Section: beta
+Filename: pool/beta/w/www-limo-allb/www-limo-allb_0.1_all.deb
+Size: 1224
+SHA256: d5bd63658f07b605106e8ff055816ade6cbdeaa34ecdb8090211cc0e6d296c9b
+SHA1: 8a02078c50611b46f1fba64d65e08f58e9525164
+MD5sum: 77656a31e272c6992516d77e489d3492
+Description: A Debian apckage to install all other packages
+

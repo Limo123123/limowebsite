@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="de"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limazon - A New Home!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap');
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f37020 0%, #f8981c 100%); /* Limazon Orange Gradient */
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            text-align: center;
+            overflow: hidden; /* Verhindert Scrollbalken durch Animationen */
+            padding: 20px;
+        }
+
+        .container {
+            animation: fadeInScaleUp 1s ease-out forwards;
+        }
+
+        @keyframes fadeInScaleUp {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3rem; /* Responsive Schriftgröße */
+            font-weight: 900; /* Extra Bold */
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            animation: slideInFromTop 0.8s ease-out 0.2s backwards;
+        }
+
+        p {
+            font-size: 1.5rem;
+            font-weight: 300; /* Light */
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
+            animation: slideInFromBottom 0.8s ease-out 0.4s backwards;
+        }
+
+        .cta-button {
+            background-color: #ffffff;
+            color: var(--lshop-orange-primary, #f37020); /* Fallback, falls CSS-Variable nicht da ist */
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700; /* Bold */
+            border-radius: 50px; /* Pill shape */
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            animation: pulse 2s infinite 1s; /* Startet nach 1s */
+        }
+
+        .cta-button:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            animation-play-state: paused; /* Stoppt Pulsieren beim Hover */
+        }
+        
+        @keyframes slideInFromTop {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideInFromBottom {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Anpassungen */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 4.5rem;
+            }
+            p {
+                font-size: 1.75rem;
+            }
+            .cta-button {
+                padding: 1.2rem 3rem;
+                font-size: 1.25rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Limazon</h1>
+        <p>hat ein neues Zuhause gefunden und erstrahlt in neuem Glanz!</p>
+        <a href="https://limo123123.github.io/limazon/" class="cta-button">
+            Entdecke die Auswahl!
+        </a>
+    </div>
+
+
+</body></html>

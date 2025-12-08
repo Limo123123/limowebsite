@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Tab Pong</title>
+    <style>
+        body { text-align: center; }
+        canvas { background: black; display: block; margin: auto; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const channel = new BroadcastChannel("pong_channel");
+
+        // Tab-Index bestimmen
+        let tabIndex = parseInt(localStorage.getItem("tabIndex")) || 0;
+        localStorage.setItem("tabIndex", tabIndex + 1);
+        const totalTabs = 2; // Anzahl der Spielfeld-Tabs (anpassbar)
+        
+        let ball = { x: 400, y: 200, vx: 4, vy: 4, radius: 8 };
+        let paddles = [ { y: 150 }, { y: 150 } ];
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            
+            // Bereich pro Tab berechnen
+            const xOffset = tabIndex * canvas.width;
+            
+            if (tabIndex === 0) {
+                ctx.fillRect(20 - xOffset, paddles[0].y, 10, 80);
+            }
+            if (tabIndex === totalTabs - 1) {
+                ctx.fillRect(770 - xOffset, paddles[1].y, 10, 80);
+            }
+            
+            if (ball.x >= xOffset && ball.x < xOffset + canvas.width) {
+                ctx.beginPath();
+                ctx.arc(ball.x - xOffset, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function update() {
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+            if (ball.y <= 0 || ball.y >= 400) ball.vy *= -1;
+            if (ball.x <= 30 && ball.y >= paddles[0].y && ball.y <= paddles[0].y + 80) ball.vx *= -1;
+            if (ball.x >= 770 && ball.y >= paddles[1].y && ball.y <= paddles[1].y + 80) ball.vx *= -1;
+        }
+
+        function loop() {
+            update();
+            draw();
+            channel.postMessage({ ball, paddles });
+            requestAnimationFrame(loop);
+        }
+
+        channel.onmessage = (e) => {
+            ball = e.data.ball;
+            paddles = e.data.paddles;
+        };
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "w" && paddles[0].y > 0) paddles[0].y -= 10;
+            if (e.key === "s" && paddles[0].y < 320) paddles[0].y += 10;
+            if (e.key === "ArrowUp" && paddles[1].y > 0) paddles[1].y -= 10;
+            if (e.key === "ArrowDown" && paddles[1].y < 320) paddles[1].y += 10;
+            channel.postMessage({ paddles });
+        });
+
+        loop();
+    </script>
+</body>
+</html>
