@@ -1,0 +1,342 @@
+version: 43
+jobs:
+- name: Publish Site
+  steps:
+  - type: CheckoutStep
+    name: Checkout
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: false
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: PublishSiteStep
+    projectPath: limo-games
+    name: Publish
+    artifacts: . **
+    condition: SUCCESSFUL
+    optional: false
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Create PyPi (Limo-Games)
+  steps:
+  - type: CheckoutStep
+    name: get code
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: false
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: CommandStep
+    name: BuildWHL
+    runInContainer: true
+    image: arm64v8/python:3.8
+    interpreter:
+      type: ShellInterpreter
+      shell: bash
+      commands: |
+        pip install --upgrade pip
+        pip install build
+
+        cd sources/pypi/limo-games
+
+        pip wheel .
+
+        # Use job token to tell OneDev the build publishing the package
+        # Job secret 'access-token' should be defined in project build setting as an access token with package write permission
+
+        cat << EOF > $HOME/.pypirc
+        [distutils]
+        index-servers=
+          onedev
+
+        [onedev]
+        repository=http://@secret:ip@/limo-games/~pypi
+        username=@job_token@
+        password=@secret:access-token@
+        EOF
+
+        pip install twine
+
+        twine upload --repository onedev limo_games-1.*
+
+        cd /onedev-build/workspace/
+    useTTY: true
+    condition: SUCCESSFUL
+    optional: false
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Create NPM (Limo-Games)
+  steps:
+  - type: CheckoutStep
+    name: Get Code
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: false
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: CommandStep
+    name: Generate and Upload NPM Package
+    runInContainer: true
+    image: node:22.13.1-bookworm
+    interpreter:
+      type: ShellInterpreter
+      shell: bash
+      commands: |
+        cd sources/nodejs/limo-games
+
+        npm install
+        npm pack
+
+        npm config set @@limo-games:registry http://@secret:ip@/limo-games/~npm/
+
+        # Use job token to tell OneDev the build publishing the package
+        # Job secret 'access-token' should be defined in project build setting as an access token with package write permission
+
+        npm config set -- '//@secret:ip@/limo-games/~npm/:_authToken' "@job_token@:@secret:access-token@"
+
+        npm publish
+    useTTY: true
+    condition: SUCCESSFUL
+    optional: false
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Create PyPi (Py-Apps)
+  steps:
+  - type: CheckoutStep
+    name: Get Code
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: false
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: CommandStep
+    name: Build-WHL
+    runInContainer: true
+    image: arm64v8/python:3.8
+    interpreter:
+      type: ShellInterpreter
+      shell: bash
+      commands: |
+        pip install --upgrade pip
+        pip install build
+
+        cd sources/pypi/py-apps
+
+        pip wheel .
+
+        # Use job token to tell OneDev the build publishing the package
+        # Job secret 'access-token' should be defined in project build setting as an access token with package write permission
+
+        cat << EOF > $HOME/.pypirc
+        [distutils]
+        index-servers=
+          onedev
+
+        [onedev]
+        repository=http://@secret:ip@/limo-games/~pypi
+        username=@job_token@
+        password=@secret:access-token@
+        EOF
+
+        pip install twine
+
+        ls
+        twine upload --repository onedev py_apps-0.*
+
+        cd /onedev-build/workspace/
+    useTTY: true
+    condition: SUCCESSFUL
+    optional: false
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Create Deb (Py-Apps)
+  steps:
+  - type: CheckoutStep
+    name: Get Code
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: false
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: CommandStep
+    name: Create Deb
+    runInContainer: true
+    image: debian:latest
+    interpreter:
+      type: ShellInterpreter
+      shell: bash
+      commands: |
+        apt update && apt install -y python3 python3-pip python3-stdeb dh-python
+
+        pip3 install setuptools wheel --break-system-packages
+
+        cd sources/pypi/py-apps/
+
+        python3 setup.py --command-packages=stdeb.command bdist_deb
+    useTTY: true
+    condition: SUCCESSFUL
+    optional: false
+  - type: PublishArtifactStep
+    name: Publish Artifatcs
+    artifacts: sources/pypi/py-apps/deb_dist/*.deb
+    condition: SUCCESSFUL
+    optional: false
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Build .tar.xz
+  steps:
+  - type: CheckoutStep
+    name: Get Code
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: false
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: CommandStep
+    name: Build ZIP
+    runInContainer: true
+    image: debian:latest
+    interpreter:
+      type: ShellInterpreter
+      shell: bash
+      commands: |
+        # Alle benötigten Tools installieren (falls noch nicht installiert)
+        apt-get update && apt-get install -y sed tar xz-utils
+
+        ls
+
+        # Alle Vorkommen von "/", "/" und "/" in allen Dateien ersetzen
+        find . -type f -exec sed -i -e 's|/|/|g' \
+                                      -e 's|/|/|g' \
+                                      -e 's|/|/|g' {} \;
+
+        # Alle Dateien und Verzeichnisse im aktuellen Verzeichnis in eine .tar.xz-Datei komprimieren
+        tar -caf latest.tar.xz *
+    useTTY: true
+    condition: SUCCESSFUL
+    optional: false
+  - type: PublishArtifactStep
+    name: Publish XZ
+    artifacts: latest.tar.xz
+    condition: SUCCESSFUL
+    optional: false
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Github
+  steps:
+  - type: CheckoutStep
+    name: get code
+    cloneCredential:
+      type: DefaultCredential
+    withLfs: true
+    withSubmodules: false
+    condition: SUCCESSFUL
+    optional: false
+  - type: CommandStep
+    name: Edit Code + Github Upload
+    runInContainer: true
+    image: debian:latest
+    interpreter:
+      type: DefaultInterpreter
+      commands: |
+        # Sicherstellen, dass Git installiert ist
+        apt update && apt install -y git
+
+        # Lösche das bestehende Git-Repository, falls vorhanden
+        rm -rf .git
+
+        # Suche und ersetze alle relevanten Pfade im Code
+        find . -type f -exec sed -i -e 's|/|/|g' \
+                                 -e 's|/|/|g' \
+                                 -e 's|/|/|g' {} \;
+
+        # Initialisiere das Git-Repository
+        git init
+
+        # Füge den Hauptserver als origin hinzu (dies ist der Hauptserver)
+        git remote add origin //limo-games.git
+
+        # Füge GitHub als zusätzlichen Remote (Mirror) hinzu
+        git remote add github https://@secret:gh@@@github.com/Limo123123/limowebsite.git
+
+        # Setze deine Git-Konfiguration (Name und Email)
+        git config --global user.name "limo123123"
+        git config --global user.email "floriantoens273@@gmail.com"
+
+        sed -i '1s/^/# MIRROR\n\nThis is the Master Branch. Changes have been applied automatically and won'"'"'t work to 100%\n\n/' README.md
+
+        # Suche und ersetze erneut (2. Durchlauf für den neuen Branch)
+        find . -type f -exec sed -i -e 's|/|/|g' {} \;
+
+        # Neuen Branch erstellen
+        git checkout -b dl
+
+        # Add Custom Change
+        sed -i '1s/^/# MIRROR\n\nThis is the DL (Download) Branch. Changes have been applied automatically and won'"'"'t work to 100%\n\n/' README.md
+
+        # Änderungen zum neuen Branch hinzufügen
+        git add .
+
+        # Commit für den alternativen Branch
+        git commit -m "Upload to DL Branch"
+
+        # --- HIER SIND DIE NEUEN, ENTSCHEIDENDEN SCHRITTE ---
+
+        # 1. Erstelle eine ZIP-Datei aus dem aktuellen Stand des 'dl' branches
+        echo "Erstelle ZIP-Archiv..."
+        git archive --format=zip --output=website.zip dl
+
+        # 2. Ermittle die genaue Größe der ZIP-Datei in Bytes
+        echo "Ermittle Dateigröße..."
+        FILE_SIZE=$(stat -c%s "website.zip")
+        echo "Größe ist: $FILE_SIZE Bytes"
+
+        # 3. Erstelle die version.json Datei mit der ermittelten Größe
+        #    (Optional: Ersetze die '1' durch eine Build-Variable wie $CI_PIPELINE_ID)
+        echo "Erstelle version.json..."
+        echo "{\"version\": @build_number@, \"fileSizeBytes\": ${FILE_SIZE}}" > version.json
+
+        # 4. Füge die neue version.json zum letzten Commit hinzu
+        #    '--amend' fügt die Datei hinzu, ohne eine neue Commit-Nachricht zu erfordern.
+        git add version.json
+        git commit --amend --no-edit
+
+        # 5. Räume die temporäre ZIP-Datei auf (sie muss nicht im Repo sein)
+        rm website.zip
+
+        # --- ENDE DER NEUEN SCHRITTE ---
+
+        # Push den neuen Branch (jetzt MIT der version.json) auf GitHub
+        echo "Pushe 'dl' Branch zu GitHub..."
+        git push github dl --force
+
+        echo "Build erfolgreich abgeschlossen!"
+    useTTY: true
+    condition: SUCCESSFUL
+    optional: false
+  jobExecutor: Pi
+  triggers:
+  - type: BranchUpdateTrigger
+    userMatch: anyone
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400

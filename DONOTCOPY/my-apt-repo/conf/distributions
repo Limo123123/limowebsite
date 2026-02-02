@@ -1,0 +1,7 @@
+Codename: bookworm
+Components: main beta
+Architectures: arm64 armhf
+
+Codename: bullseye
+Components: main beta
+Architectures: arm64 armhf

@@ -1,0 +1,237 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LimOS</title>
+  <link rel="icon" href="/bilder/limoico/limo.ico">
+  <link href="/assets_offline/1765221685882_dl_asset_famil.css" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/bilder/limoico/limo.ico">
+  <link rel="stylesheet" href="/assets_offline/1765221661566_all.min.css">
+  <script src="/assets_offline/1765221661746_dl_asset.css"></script>
+  <style>
+    .color-picker {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .color-picker::-webkit-color-swatch-wrapper {
+      padding: 0;
+      border-radius: 50%;
+    }
+    .color-picker::-webkit-color-swatch {
+      border: none;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body class="bg-blue-700 text-gray-800 font-roboto">
+  <!-- Navigation -->
+  <header id="navbar" class="bg-blue-700 p-4 flex items-center justify-between shadow-lg">
+    <div class="text-green-500 text-2xl font-bold">LimOS</div>
+    <nav class="space-x-4">
+      <a href="/home/v3/" class="text-white hover:underline">Home</a>
+      <a href="/recalgames/" class="text-white hover:underline">Games</a>
+      <a href="/downloads/index.html" class="text-white hover:underline">Downloads</a>
+      <a href="/impressum.html" class="text-white hover:underline">Impressum</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('loginModal').style.display='flex'" class="text-white hover:underline">Login</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero" class="relative h-96 flex items-center justify-center text-center">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="relative z-10 text-white">
+      <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <span class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+          Welcome to Pi Server
+        </span>
+      </h1>
+      <p class="text-xl md:text-2xl">Powered by LimoOS - Your gateway to fun and games</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container mx-auto p-6">
+    <!-- Game Selector -->
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg text-gray-800">
+      <h2 class="text-2xl font-bold mb-4">Select a Game</h2>
+      <select id="gameSelect" class="w-full p-3 border border-gray-300 rounded-lg mb-4 text-gray-800 bg-white">
+        <option value="/1.html">Game 1</option>
+        <option value="/2.html">Game 2</option>
+        <option value="/3.html">Game 3</option>
+        <option value="/4.html">Game 4</option>
+        <option value="/5.html">Game 5</option>
+        <option value="/6.html">Game 6</option>
+        <option value="/7.html">Game 7</option>
+        <option value="/8.html">Game 8</option>
+        <option value="/9.html">Game 9</option>
+        <option value="/10.html">Game 10</option>
+        <option value="/11.html">Game 11 (Party!!!)</option>
+        <option value="/testgames">Test Games</option>
+        <option value="/flappybird">Flappy Bird</option>
+        <option value="/loader">News</option>
+        <option value="/2048/index.html">2048</option>
+        <option value="/HexGL/index.html">HexGL</option>
+        <option value="/SpaceCompany">Space Company</option>
+        <option value="/towergame">Tower Game</option>
+        <option value="/minecraft.html">Paper Minecraft</option>
+        <option value="/minecraftlimo.html">Minecraft Limo Edition</option>
+        <option value="/snake.html">Snake</option>
+        <option value="/hextrislite">Hextris Lite</option>
+        <option value="/Pacman">Pacman</option>
+        <option value="/niklassachen/notadash.html">Not a Dash</option>
+        <option value="/randomnumber">Errate die Zahl!</option>
+        <option value="/schnickschnackschnuck">Schnick Schnack Schnuck</option>
+        <option value="/LimoEngine/Beta/securetext">Text Übersetzter Beta</option>
+        <option value="/recalgames">List of Games</option>
+        <option value="/LimoEngine/limbeeressen.html">Limbeer Fütterung</option>
+        <option value="/LimoEngine/limoauto.html">Limbeer Fütterung Automatisch</option>
+        <option value="/LimoEngine/Sandboxels/">Sandboxels</option>
+        <option value="/minecraftv2/minecraft.html">Minecraft V2</option>
+        <option value="/tools/limazon">Limazon</option>
+        <option value="/phplibary/spacecompanyv2.php">Space Company V2</option>
+        <option value="/LimoEngine/Beta/securetext/ve.php">Text Übersetzter V2</option>
+        <option value="/LimoEngine/Beta/securetext3/">Text Übersetzter V3</option>
+		<option value="/tools/limolights/">Limolights</option>
+        <option value="/citygame/">3D City</option>
+        <option value="/tl/u/">URL Shortener</option>
+        <option value="/tools/notes/">Dumb Notes App</option>
+        <option value="/tools/photowhat/">Where is this Photo from?</option>
+        <option value="/AirportSniper">Airport Sniper</option>
+        <option value="/AlienInvader">Alien Invader</option>
+        <option value="/GameOfLife/GameOfLife.html">Game of Life</option>
+        <option value="/suchmaschine.html">ID Suchmaschine</option>
+        <option value="/minecraft/minecraft.html">Minecraft Tastatur</option>
+        <option value="/duolingo/duolingo.html">Duolingo</option>
+        <option value="/Ampel/index.html">Ampel</option>
+        <option value="/gamelibary/animation/index.html">Chaos</option>
+        <option value="/WebLim/">Lim Back Maschine</option>
+        <option value="/downloads/index.html">Downloads</option>
+        <option value="/releases/">Releases</option>
+        <option value="/dev/">Developer Games</option>
+        <option value="/impressum.html">Impressum</option>
+      </select>
+      <button onclick="window.location.href = document.getElementById('gameSelect').value;" class="w-full p-3 bg-green-500 text-white rounded-lg hover:bg-green-600">Start Game</button>
+    </div>
+
+    <!-- News Section -->
+    <div class="mt-10">
+      <h2 class="text-2xl font-bold mb-4 text-white">Latest News</h2>
+      <iframe src="/news/sources/apt/index.html" name="newsFrame" class="w-full h-64 border border-gray-300 rounded-lg" scrolling="yes" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+
+    <!-- Color Selection -->
+    <div id="color-selection" class="mt-10">
+      <label for="color" class="block text-lg font-bold mb-2 text-white">Choose a color:</label>
+      <div class="flex items-center space-x-4">
+        <input type="color" id="color" class="color-picker">
+        <button id="applyColor" class="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Apply Color</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-200 p-4 text-center text-sm text-gray-700">
+    <p>© 2025 Limo Open Source Project. Home Page V3. All rights reserved.</p>
+  </footer>
+
+  <!-- Modal Login -->
+  <div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="loginModal">
+    <div class="modal-content bg-white p-6 rounded-lg shadow-lg relative">
+      <span class="modal-close absolute top-2 right-2 text-2xl cursor-pointer text-gray-600" onclick="document.getElementById('loginModal').style.display='none'">×</span>
+      <h2 class="text-2xl font-bold text-blue-600 mb-4">Login</h2>
+      <input type="text" placeholder="Username" class="w-full p-3 border border-gray-300 rounded-lg mb-4">
+      <input type="password" placeholder="Password" class="w-full p-3 border border-gray-300 rounded-lg mb-4">
+      <button class="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Login</button>
+    </div>
+  </div>
+
+  <script>
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + value + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      let nameEQ = name + "=";
+      let ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function isLightColor(color) {
+      const r = parseInt(color.substr(1, 2), 16);
+      const g = parseInt(color.substr(3, 2), 16);
+      const b = parseInt(color.substr(5, 2), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 155;
+    }
+
+    function updateTextColor(color) {
+      const textColor = isLightColor(color) ? '#000000' : '#FFFFFF';
+      document.querySelectorAll('.text-white, .text-gray-800').forEach(el => {
+        el.style.color = textColor;
+      });
+      document.querySelectorAll('.bg-white').forEach(el => {
+        el.style.backgroundColor = textColor === '#000000' ? '#FFFFFF' : '#333333';
+        el.style.color = textColor === '#000000' ? '#000000' : '#FFFFFF';
+      });
+      document.querySelectorAll('select').forEach(el => {
+        el.style.color = textColor === '#000000' ? '#000000' : '#FFFFFF';
+        el.style.backgroundColor = textColor === '#000000' ? '#FFFFFF' : '#333333';
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      let savedColor = getCookie("bgColor");
+      if (savedColor) {
+        document.body.style.backgroundColor = savedColor;
+        document.getElementById('color').value = savedColor;
+        document.getElementById('navbar').style.backgroundColor = savedColor;
+        document.getElementById('hero').style.backgroundColor = savedColor;
+        updateTextColor(savedColor);
+      }
+    });
+
+    document.getElementById('applyColor').addEventListener('click', function() {
+      let color = document.getElementById('color').value;
+      document.body.style.backgroundColor = color;
+      document.getElementById('navbar').style.backgroundColor = color;
+      document.getElementById('hero').style.backgroundColor = color;
+      updateTextColor(color);
+      setCookie("bgColor", color, 30);
+    });
+  </script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((registration) => {
+          console.log('Service Worker registriert:', registration);
+        })
+        .catch((error) => {
+          console.log('Service Worker Registrierung fehlgeschlagen:', error);
+        });
+    });
+  }
+</script>
+
+
+</body></html>
